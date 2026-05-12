@@ -1,0 +1,2116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>PROMPTFORGE — Ultimate Edition</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&family=Barlow+Condensed:wght@400;600;700;900&display=swap');
+:root{
+  --bg:#080808;--s1:#111;--s2:#181818;--s3:#222;--border:#2c2c2c;
+  --red:#ff3c00;--yellow:#ffd000;--cyan:#00e5ff;--green:#39ff14;
+  --purple:#b44dff;--pink:#ff006e;--gold:#ffd700;--text:#e8e8e8;--dim:#666;--white:#fff;--ph:36px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Space Mono',monospace;min-height:100vh;overflow-x:hidden}
+
+/* HEADER */
+header{background:var(--s1);border-bottom:3px solid var(--red);padding:0 16px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:300}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:4px;color:#fff}
+.logo em{color:var(--red);font-style:normal}
+.logo-sub{font-family:'Barlow Condensed',sans-serif;font-size:.58rem;letter-spacing:3px;color:var(--dim);text-transform:uppercase;margin-top:-3px}
+.hdr-r{font-family:'Barlow Condensed',sans-serif;font-size:.6rem;letter-spacing:1.5px;color:var(--dim);text-align:right;line-height:1.5}
+
+/* VAULT BAR */
+.vault-bar{background:#0d0d0d;border-bottom:2px solid var(--border);padding:8px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;position:sticky;top:56px;z-index:299}
+.vault-status{font-family:'Barlow Condensed',sans-serif;font-size:.72rem;letter-spacing:1.5px;color:var(--green);text-transform:uppercase;display:flex;align-items:center;gap:6px}
+.vault-status.off{color:var(--dim)}
+.vault-dot{width:7px;height:7px;border-radius:50%;background:var(--green);flex-shrink:0;animation:pulse 2s infinite}
+.vault-dot.off{background:var(--dim);animation:none}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.vault-toggle{font-family:'Bebas Neue',sans-serif;font-size:.8rem;letter-spacing:2px;padding:5px 12px;border-radius:3px;border:1px solid var(--border);background:transparent;color:var(--dim);cursor:pointer;touch-action:manipulation}
+.vault-toggle.active{border-color:var(--green);color:var(--green)}
+
+/* BRAND MODE BAR */
+.brand-bar{background:#0a0800;border-bottom:2px solid var(--border);padding:8px 16px;display:flex;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.brand-bar::-webkit-scrollbar{display:none}
+.brand-btn{font-family:'Bebas Neue',sans-serif;font-size:.8rem;letter-spacing:2px;padding:6px 14px;border-radius:3px;border:1px solid var(--border);background:var(--s2);color:var(--dim);cursor:pointer;white-space:nowrap;flex-shrink:0;touch-action:manipulation;transition:all .15s}
+.brand-btn.gk{border-color:var(--gold);color:var(--gold)}
+.brand-btn.gk.active{background:var(--gold);color:#000}
+.brand-btn.dx{border-color:var(--cyan);color:var(--cyan)}
+.brand-btn.dx.active{background:var(--cyan);color:#000}
+.brand-btn.dj{border-color:var(--purple);color:var(--purple)}
+.brand-btn.dj.active{background:var(--purple);color:#fff}
+.brand-btn.off-btn{border-color:var(--border);color:var(--dim)}
+.brand-btn.off-btn.active{background:var(--s3);color:var(--text)}
+
+/* LAYOUT */
+.app{max-width:680px;margin:0 auto;padding:14px 12px 130px}
+
+/* ACCORDION */
+.acc{background:var(--s1);border:1px solid var(--border);border-radius:6px;margin-bottom:10px;overflow:hidden}
+.acc.open{border-color:var(--red)}
+.acc-head{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;cursor:pointer;user-select:none;touch-action:manipulation}
+.acc-head:active{background:var(--s2)}
+.acc-title{font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:3px;color:#fff;display:flex;align-items:center;gap:10px}
+.acc-dot{width:8px;height:8px;border-radius:50%;background:var(--red);flex-shrink:0}
+.acc.open .acc-dot{background:var(--yellow)}
+.acc-right{display:flex;align-items:center;gap:10px}
+.acc-meta{font-family:'Barlow Condensed',sans-serif;font-size:.68rem;letter-spacing:1px;color:var(--dim);text-transform:uppercase}
+.acc-arrow{color:var(--dim);font-size:.9rem;transition:transform .2s;flex-shrink:0}
+.acc.open .acc-arrow{transform:rotate(180deg);color:var(--yellow)}
+.acc-body{display:none;padding:14px 16px;border-top:1px solid var(--border)}
+.acc.open .acc-body{display:block}
+
+/* LABELS */
+.sl{font-family:'Barlow Condensed',sans-serif;font-size:.7rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:8px;margin-top:14px}
+.sl:first-child{margin-top:0}
+.sub-l{font-family:'Bebas Neue',sans-serif;font-size:.78rem;letter-spacing:2px;color:var(--cyan);margin-bottom:6px;margin-top:12px}
+.sub-l:first-child{margin-top:0}
+.sub-l.gold{color:var(--gold)}
+.sub-l.red{color:var(--red)}
+.sub-l.green{color:var(--green)}
+.sub-l.purple{color:var(--purple)}
+
+/* PILLS */
+.pills{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px}
+.pill{font-family:'Barlow Condensed',sans-serif;font-size:.82rem;font-weight:700;letter-spacing:.8px;text-transform:uppercase;padding:0 12px;height:var(--ph);line-height:var(--ph);border-radius:3px;border:1px solid var(--border);cursor:pointer;transition:all .12s;background:var(--s2);color:var(--dim);user-select:none;white-space:nowrap;touch-action:manipulation}
+.pill:active{transform:scale(.95)}
+.pill.on {background:var(--red);   border-color:var(--red);   color:#000;font-weight:900}
+.pill.on-y{background:var(--yellow);border-color:var(--yellow);color:#000;font-weight:900}
+.pill.on-c{background:var(--cyan);  border-color:var(--cyan);  color:#000;font-weight:900}
+.pill.on-g{background:var(--green); border-color:var(--green); color:#000;font-weight:900}
+.pill.on-p{background:var(--purple);border-color:var(--purple);color:#fff;font-weight:900}
+.pill.on-k{background:var(--pink);  border-color:var(--pink);  color:#fff;font-weight:900}
+.pill.on-gold{background:var(--gold);border-color:var(--gold);color:#000;font-weight:900}
+
+/* CAT STRIP */
+.cat-strip{display:flex;gap:6px;overflow-x:auto;padding-bottom:8px;margin-bottom:12px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.cat-strip::-webkit-scrollbar{display:none}
+.cp{font-family:'Barlow Condensed',sans-serif;font-size:.78rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:6px 14px;border-radius:20px;white-space:nowrap;flex-shrink:0;border:1px solid var(--border);background:var(--s2);color:var(--dim);cursor:pointer;transition:all .15s;touch-action:manipulation}
+.cp.active{background:var(--yellow);border-color:var(--yellow);color:#000}
+
+/* STYLE / FONT / OTHER CATS */
+.scat{display:none}.scat.show{display:block}
+.fcat{display:none}.fcat.show{display:block}
+.cond-panel{display:none}.cond-panel.show{display:block}
+
+/* CONTEXT MODE */
+.ctx-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.ctx-btn{font-family:'Bebas Neue',sans-serif;font-size:.82rem;letter-spacing:2px;padding:12px 8px;border-radius:4px;border:1px solid var(--border);background:var(--s2);color:var(--dim);cursor:pointer;text-align:center;transition:all .15s;touch-action:manipulation;line-height:1.3}
+.ctx-btn .ctx-icon{font-size:1.2rem;display:block;margin-bottom:3px}
+.ctx-btn.active{background:var(--red);border-color:var(--red);color:#000;font-weight:900}
+
+/* SUBJECT TYPE */
+.subj-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.subj-btn{font-family:'Bebas Neue',sans-serif;font-size:.82rem;letter-spacing:2px;padding:12px 8px;border-radius:4px;border:1px solid var(--border);background:var(--s2);color:var(--dim);cursor:pointer;text-align:center;transition:all .15s;touch-action:manipulation;line-height:1.3}
+.subj-btn .subj-icon{font-size:1.2rem;display:block;margin-bottom:3px}
+.subj-btn.active{background:var(--red);border-color:var(--red);color:#000}
+
+/* UPLOAD */
+.upload-zone{border:2px dashed var(--border);border-radius:6px;padding:18px 12px;text-align:center;cursor:pointer;transition:all .2s;background:var(--s2);position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:100px}
+.upload-zone.drag{border-color:var(--red);background:#180800}
+.upload-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.upload-icon{font-size:1.8rem}
+.upload-lbl{font-family:'Barlow Condensed',sans-serif;font-size:.8rem;letter-spacing:1px;color:var(--dim)}
+.upload-preview{max-width:100%;max-height:130px;object-fit:contain;border-radius:4px;display:none}
+.upload-preview.show{display:block}
+.upload-fn{font-size:.65rem;color:var(--cyan);letter-spacing:1px;font-family:'Barlow Condensed',sans-serif}
+
+/* INPUTS */
+textarea.field,input.field,select.field{background:var(--s2);border:1px solid var(--border);border-radius:4px;color:var(--text);font-family:'Space Mono',monospace;font-size:.75rem;padding:10px;width:100%;transition:border-color .2s}
+textarea.field{resize:vertical;min-height:60px;line-height:1.5}
+textarea.field:focus,input.field:focus,select.field:focus{outline:none;border-color:var(--cyan)}
+textarea.field::placeholder,input.field::placeholder{color:var(--dim)}
+select.field option{background:var(--s2);color:var(--text)}
+
+/* CHARACTER LIBRARY */
+.char-card{background:var(--s2);border:1px solid var(--border);border-radius:4px;padding:12px;margin-bottom:8px;display:flex;align-items:flex-start;gap:10px;cursor:pointer;transition:all .15s}
+.char-card.active{border-color:var(--gold);background:#1a1400}
+.char-check{width:18px;height:18px;border:2px solid var(--border);border-radius:3px;flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;font-size:.7rem;transition:all .15s}
+.char-card.active .char-check{background:var(--gold);border-color:var(--gold);color:#000}
+.char-name{font-family:'Bebas Neue',sans-serif;font-size:.9rem;letter-spacing:2px;color:var(--yellow);margin-bottom:3px}
+.char-desc{font-family:'Barlow Condensed',sans-serif;font-size:.72rem;color:var(--dim);line-height:1.4}
+
+/* AI GRID */
+.ai-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ai-btn{background:var(--s2);border:1px solid var(--border);border-radius:4px;padding:11px 12px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:9px;touch-action:manipulation}
+.ai-btn.sel{border-color:var(--cyan);background:#001c22}
+.ai-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.ai-name{font-family:'Barlow Condensed',sans-serif;font-size:.85rem;font-weight:700;letter-spacing:1px;color:var(--dim)}
+.ai-btn.sel .ai-name{color:var(--cyan)}
+
+/* TOGGLE */
+.tog{display:flex;align-items:center;gap:10px;cursor:pointer;font-family:'Barlow Condensed',sans-serif;font-size:.82rem;letter-spacing:1px;color:var(--dim);text-transform:uppercase;padding:6px 0;touch-action:manipulation}
+.tog input[type=checkbox]{accent-color:var(--red);width:16px;height:16px;cursor:pointer;flex-shrink:0}
+
+/* GRIDS */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:400px){.two-col{grid-template-columns:1fr}}
+
+/* TEXT LINES */
+.text-line{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+.text-line input{flex:1}
+.line-label{font-family:'Bebas Neue',sans-serif;font-size:.75rem;letter-spacing:1px;color:var(--dim);white-space:nowrap;min-width:28px}
+.add-line-btn{font-family:'Bebas Neue',sans-serif;font-size:.8rem;letter-spacing:2px;padding:7px 14px;border-radius:3px;border:1px solid var(--border);background:transparent;color:var(--dim);cursor:pointer;touch-action:manipulation;margin-top:4px}
+
+/* HISTORY */
+.hist-item{background:var(--s2);border:1px solid var(--border);border-radius:4px;padding:10px 12px;margin-bottom:8px;cursor:pointer;transition:all .15s}
+.hist-item:hover{border-color:var(--cyan)}
+.hist-meta{font-family:'Barlow Condensed',sans-serif;font-size:.65rem;letter-spacing:1px;color:var(--dim);margin-bottom:4px;display:flex;justify-content:space-between}
+.hist-preview{font-size:.7rem;color:var(--text);line-height:1.4;max-height:40px;overflow:hidden;text-overflow:ellipsis}
+.hist-del{color:var(--red);font-size:.7rem;cursor:pointer;font-family:'Bebas Neue',sans-serif;letter-spacing:1px}
+
+/* SAFE ZONE OVERLAY */
+.safe-zone-wrap{position:relative;background:var(--s3);border:1px solid var(--border);border-radius:4px;overflow:hidden;margin-bottom:10px}
+.safe-zone-canvas{width:100%;aspect-ratio:1/1;display:block}
+.safe-zone-label{position:absolute;font-family:'Barlow Condensed',sans-serif;font-size:.65rem;letter-spacing:1px;background:rgba(0,0,0,.7);padding:2px 6px;border-radius:2px;pointer-events:none}
+
+/* STICKY BOTTOM */
+.sticky-bottom{position:fixed;bottom:0;left:0;right:0;z-index:200;background:linear-gradient(transparent,#080808 30%);padding:10px 12px 12px}
+.gen-btn{width:100%;font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:6px;padding:15px;background:var(--red);color:#000;border:none;border-radius:4px;cursor:pointer;transition:all .15s;touch-action:manipulation}
+.gen-btn:active{transform:scale(.98);background:#e03400}
+
+/* OUTPUT */
+.out-wrap{background:var(--s1);border:2px solid var(--red);border-radius:6px;padding:16px;margin-bottom:10px}
+.out-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.out-title{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:3px;color:#fff}
+.pblock{margin-bottom:14px;animation:fi .25s ease both}
+.plbl{font-family:'Bebas Neue',sans-serif;font-size:.82rem;letter-spacing:2px;padding:4px 12px;display:inline-block;border-radius:3px 3px 0 0}
+.pbox{background:var(--s2);border:1px solid var(--border);border-radius:0 4px 4px 4px;padding:38px 12px 12px;font-size:.73rem;line-height:1.75;color:var(--text);white-space:pre-wrap;word-break:break-word;min-height:60px;position:relative}
+.copy-btn{position:absolute;top:8px;right:8px;font-family:'Bebas Neue',sans-serif;font-size:.72rem;letter-spacing:2px;padding:5px 12px;background:var(--s3);border:1px solid var(--border);color:var(--dim);border-radius:2px;cursor:pointer;transition:all .15s;touch-action:manipulation}
+.copy-btn.ok{border-color:var(--green);color:var(--green)}
+.neg-box{background:#0d0000;border:1px solid #3d0000;border-radius:4px;padding:10px 12px;font-size:.7rem;font-family:'Space Mono',monospace;color:#ff6666;margin-top:8px;line-height:1.6}
+
+/* BUTTONS */
+.btn-row{display:flex;gap:8px;flex-wrap:wrap}
+.btn-sm{font-family:'Bebas Neue',sans-serif;font-size:.8rem;letter-spacing:2px;padding:7px 14px;border-radius:3px;border:1px solid var(--border);background:transparent;color:var(--dim);cursor:pointer;transition:all .15s;touch-action:manipulation}
+.btn-sm.gold{border-color:var(--gold);color:var(--gold)}
+.btn-sm.green{border-color:var(--green);color:var(--green)}
+
+/* NOTICE / INFO */
+.notice{background:#1a1000;border:1px solid #3d2a00;border-radius:4px;padding:10px 12px;font-family:'Barlow Condensed',sans-serif;font-size:.8rem;letter-spacing:.5px;color:#cca000;line-height:1.5;margin-bottom:10px}
+.info-box{background:#001622;border:1px solid #003344;border-radius:4px;padding:10px 12px;font-family:'Barlow Condensed',sans-serif;font-size:.8rem;letter-spacing:.5px;color:#00a8cc;line-height:1.5;margin-bottom:10px}
+.gold-box{background:#0d0900;border:1px solid #3d2e00;border-radius:4px;padding:10px 12px;font-family:'Barlow Condensed',sans-serif;font-size:.8rem;letter-spacing:.5px;color:var(--gold);line-height:1.5;margin-bottom:10px}
+
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:var(--s1)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+@keyframes fi{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+@media(min-width:700px){.app{padding:20px 20px 130px}}
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="logo">PROMPT<em>FORGE</em></div>
+    <div class="logo-sub">Ultimate AI Image Prompt Generator</div>
+  </div>
+  <div class="hdr-r">DJ Shawn Lopes Edition<br>v4.0 Ultimate</div>
+</header>
+
+<!-- VAULT BAR -->
+<div class="vault-bar">
+  <div class="vault-status" id="vaultStatus">
+    <span class="vault-dot" id="vaultDot"></span>
+    <span id="vaultText">🛡️ NEGATIVE VAULT — ACTIVE</span>
+  </div>
+  <button class="vault-toggle active" id="vaultToggleBtn" onclick="toggleVault()">TOGGLE</button>
+</div>
+
+<!-- BRAND MODE BAR -->
+<div class="brand-bar">
+  <div class="brand-btn off-btn active" id="brand-none" onclick="setBrand('none',this)">⚪ No Brand Mode</div>
+  <div class="brand-btn gk" id="brand-gk" onclick="setBrand('gk',this)">👑 Goat King Mode</div>
+  <div class="brand-btn dx" id="brand-dx" onclick="setBrand('dx',this)">🔊 DynamiX SounD</div>
+  <div class="brand-btn dj" id="brand-dj" onclick="setBrand('dj',this)">🎧 DJ Shawn Lopes</div>
+</div>
+
+<div class="app">
+
+<!-- BRAND MODE INFO -->
+<div id="brandInfo" style="display:none"></div>
+
+<!-- ══ 1. CONTEXT MODE ══ -->
+<div class="acc open" id="acc-ctx">
+  <div class="acc-head" onclick="toggleAcc('acc-ctx')">
+    <div class="acc-title"><span class="acc-dot"></span>Output Context</div>
+    <div class="acc-right"><span class="acc-meta" id="ctxSummary">T-Shirt Design</span><span class="acc-arrow">▼</span></div>
+  </div>
+  <div class="acc-body">
+    <div class="ctx-grid">
+      <div class="ctx-btn active" id="ctx-tshirt" onclick="setCtx('tshirt',this)">
+        <span class="ctx-icon">👕</span>T-Shirt / Merch
+      </div>
+      <div class="ctx-btn" id="ctx-album" onclick="setCtx('album',this)">
+        <span class="ctx-icon">🎵</span>Album / Single Art
+      </div>
+      <div class="ctx-btn" id="ctx-lifestyle" onclick="setCtx('lifestyle',this)">
+        <span class="ctx-icon">📸</span>Lifestyle Mockup
+      </div>
+      <div class="ctx-btn" id="ctx-logo" onclick="setCtx('logo',this)">
+        <span class="ctx-icon">🔷</span>Logo / Brand
+      </div>
+      <div class="ctx-btn" id="ctx-poster" onclick="setCtx('poster',this)">
+        <span class="ctx-icon">🪧</span>Poster / Promo
+      </div>
+      <div class="ctx-btn" id="ctx-general" onclick="setCtx('general',this)">
+        <span class="ctx-icon">🎨</span>General Art
+      </div>
+    </div>
+
+    <!-- ALBUM CONTEXT EXTRAS -->
+    <div class="cond-panel" id="ctx-panel-album">
+      <div class="gold-box">🎵 Album Art Mode — prompts optimized for Spotify 3000x3000px. Safe zone overlay shown below.</div>
+      <div class="sl">Track / Single Name</div>
+      <input class="field" type="text" id="trackName" placeholder="e.g. diRoadRage Edit, Soca Comboio, Fire Riddim..."/>
+      <div class="sl">Release Type</div>
+      <div class="pills" id="releaseTypePills">
+        <div class="pill on"  data-c="on"   onclick="solo(this,'releaseTypePills')">Single</div>
+        <div class="pill"     data-c="on-y" onclick="solo(this,'releaseTypePills')">EP</div>
+        <div class="pill"     data-c="on-c" onclick="solo(this,'releaseTypePills')">Album</div>
+        <div class="pill"     data-c="on-p" onclick="solo(this,'releaseTypePills')">Remix</div>
+        <div class="pill"     data-c="on-g" onclick="solo(this,'releaseTypePills')">Mixtape</div>
+      </div>
+      <!-- SPOTIFY SAFE ZONE -->
+      <div class="sl">Spotify Safe Zone Preview</div>
+      <div class="safe-zone-wrap">
+        <canvas class="safe-zone-canvas" id="safeZoneCanvas" width="300" height="300"></canvas>
+      </div>
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:.72rem;color:var(--dim);letter-spacing:1px;margin-top:4px">
+        🔴 Red = Play button area &nbsp; 🟡 Yellow = Title/Artist text area &nbsp; Keep main art in safe white zone
+      </div>
+    </div>
+
+    <!-- LIFESTYLE CONTEXT EXTRAS -->
+    <div class="cond-panel" id="ctx-panel-lifestyle">
+      <div class="sl">Environment / Scene</div>
+      <select class="field" id="lifestyleEnv">
+        <option value="">— Select Environment —</option>
+        <option value="professional photography studio with seamless white backdrop, studio strobes, product photography lighting">Professional Studio</option>
+        <option value="urban streetwear environment, city sidewalk, graffiti walls, golden hour lighting, street photography aesthetic">Urban Streetwear</option>
+        <option value="DJ booth setup, club lighting, CDJs and mixer, neon glow, crowd in background, festival energy">DJ Booth</option>
+        <option value="electronics workbench, soldering tools, oscilloscope screens, frequency analyzer displays, technical workshop">Electronics Workbench</option>
+        <option value="carnival / soca festival, colorful costume backdrop, confetti, massive crowd energy, tropical vibrancy">Soca Carnival Stage</option>
+        <option value="music recording studio, mixing board, acoustic panels, soft amber lighting, professional recording session">Recording Studio</option>
+        <option value="rooftop at sunset, city skyline, golden hour, warm cinematic lighting, lifestyle photography">Rooftop Sunset</option>
+        <option value="luxury penthouse interior, marble floors, floor-to-ceiling windows, gold accents, high-end lifestyle">Luxury Interior</option>
+        <option value="underground club, dark atmosphere, laser beams, smoke machine, techno rave energy">Underground Club</option>
+        <option value="outdoor festival main stage, massive crowd, pyrotechnics, daytime sun, festival wristbands">Festival Main Stage</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 2. SUBJECT ══ -->
+<div class="acc open" id="acc-subject">
+  <div class="acc-head" onclick="toggleAcc('acc-subject')">
+    <div class="acc-title"><span class="acc-dot"></span>What Are You Creating?</div>
+    <div class="acc-right"><span class="acc-meta" id="subjectSummary">Character</span><span class="acc-arrow">▼</span></div>
+  </div>
+  <div class="acc-body">
+    <div class="subj-grid">
+      <div class="subj-btn active" id="stype-character" onclick="setSubject('character',this)"><span class="subj-icon">🧍</span>Character</div>
+      <div class="subj-btn" id="stype-logo" onclick="setSubject('logo',this)"><span class="subj-icon">🔷</span>Logo / Mark</div>
+      <div class="subj-btn" id="stype-object" onclick="setSubject('object',this)"><span class="subj-icon">📦</span>Object / Mascot</div>
+    </div>
+
+    <div class="cond-panel show" id="panel-character">
+      <div class="upload-zone" id="uploadZone">
+        <input type="file" id="fileInput" accept="image/*"/>
+        <div id="upPh"><div class="upload-icon">🖼️</div><div class="upload-lbl">Tap to upload reference photo</div></div>
+        <img class="upload-preview" id="upPreview"/>
+        <div class="upload-fn" id="upName"></div>
+      </div>
+      <div class="sl">Character Description</div>
+      <textarea class="field" id="charDesc" rows="3" placeholder="e.g. muscular man with mohawk, leather jacket, tattoos, fierce expression..."></textarea>
+    </div>
+
+    <div class="cond-panel" id="panel-logo">
+      <div class="info-box">💡 Logo mode optimizes prompts for brand marks. Pose/mood sections auto-adjust.</div>
+      <div class="sl">Logo / Brand Description</div>
+      <textarea class="field" id="logoDesc" rows="3" placeholder="e.g. lion head with crown, bold and aggressive, fitness brand called APEX..."></textarea>
+      <div class="sl">Industry / Vibe</div>
+      <div class="pills" id="logoIndustryPills">
+        <div class="pill" data-c="on"   onclick="tog(this)">Fitness / Gym</div>
+        <div class="pill" data-c="on"   onclick="tog(this)">Sports Team</div>
+        <div class="pill" data-c="on-y" onclick="tog(this)">Music / Band</div>
+        <div class="pill" data-c="on-y" onclick="tog(this)">Streetwear</div>
+        <div class="pill" data-c="on-c" onclick="tog(this)">Gaming / Esports</div>
+        <div class="pill" data-c="on-c" onclick="tog(this)">Tech / Startup</div>
+        <div class="pill" data-c="on-g" onclick="tog(this)">Food / Restaurant</div>
+        <div class="pill" data-c="on-g" onclick="tog(this)">Tattoo Studio</div>
+        <div class="pill" data-c="on-p" onclick="tog(this)">Motorcycle / Club</div>
+        <div class="pill" data-c="on-p" onclick="tog(this)">Luxury / Premium</div>
+        <div class="pill" data-c="on-k" onclick="tog(this)">Barbershop</div>
+        <div class="pill" data-c="on-k" onclick="tog(this)">DJ / Music Producer</div>
+      </div>
+    </div>
+
+    <div class="cond-panel" id="panel-object">
+      <div class="sl">Object / Mascot Description</div>
+      <textarea class="field" id="objDesc" rows="3" placeholder="e.g. flaming skull with sunglasses, cartoon cactus, angry eagle mascot..."></textarea>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 3. CHARACTER LIBRARY ══ -->
+<div class="acc" id="acc-chars">
+  <div class="acc-head" onclick="toggleAcc('acc-chars')">
+    <div class="acc-title"><span class="acc-dot"></span>Character Library</div>
+    <div class="acc-right"><span class="acc-meta">The Sauce</span><span class="acc-arrow">▼</span></div>
+  </div>
+  <div class="acc-body">
+    <div class="gold-box">👑 Select characters to inject their physical descriptions into the prompt automatically. Add your own recurring characters below.</div>
+
+    <div class="char-card" id="char-gk" onclick="toggleChar('gk')">
+      <div class="char-check" id="check-gk"></div>
+      <div>
+        <div class="char-name">👑 GOAT KING</div>
+        <div class="char-desc">Powerful regal goat figure wearing a gold and black crown, draped in luxury gold and black robes, fierce intelligent eyes, commanding royal presence, NOT demonic or occult, majestic and authoritative</div>
+      </div>
+    </div>
+
+    <div class="char-card" id="char-djsl" onclick="toggleChar('djsl')">
+      <div class="char-check" id="check-djsl"></div>
+      <div>
+        <div class="char-name">🎧 DJ SHAWN LOPES</div>
+        <div class="char-desc">DJ persona, confident and stylish, professional DJ equipment, high-energy performer presence, music producer aesthetic, Caribbean and electronic music culture fusion</div>
+      </div>
+    </div>
+
+    <div class="char-card" id="char-sean" onclick="toggleChar('sean')">
+      <div class="char-check" id="check-sean"></div>
+      <div>
+        <div class="char-name">👤 SEAN</div>
+        <div class="char-desc" id="desc-sean">Click edit to add Sean's description</div>
+      </div>
+    </div>
+    <button class="btn-sm" style="margin-bottom:8px" onclick="editChar('sean')">✏️ Edit Sean</button>
+
+    <div class="char-card" id="char-laurinda" onclick="toggleChar('laurinda')">
+      <div class="char-check" id="check-laurinda"></div>
+      <div>
+        <div class="char-name">👤 LAURINDA</div>
+        <div class="char-desc" id="desc-laurinda">Click edit to add Laurinda's description</div>
+      </div>
+    </div>
+    <button class="btn-sm" style="margin-bottom:8px" onclick="editChar('laurinda')">✏️ Edit Laurinda</button>
+
+    <div class="char-card" id="char-mike" onclick="toggleChar('mike')">
+      <div class="char-check" id="check-mike"></div>
+      <div>
+        <div class="char-name">👤 MIKE</div>
+        <div class="char-desc" id="desc-mike">Click edit to add Mike's description</div>
+      </div>
+    </div>
+    <button class="btn-sm" style="margin-bottom:8px" onclick="editChar('mike')">✏️ Edit Mike</button>
+
+    <div class="sl">Add Custom Character</div>
+    <div class="two-col" style="margin-bottom:8px">
+      <input class="field" type="text" id="customCharName" placeholder="Character name..."/>
+      <button class="btn-sm gold" onclick="addCustomChar()">+ ADD</button>
+    </div>
+    <textarea class="field" id="customCharDesc" rows="2" placeholder="Physical description to inject into prompt..."></textarea>
+    <div id="customCharsList" style="margin-top:8px"></div>
+  </div>
+</div>
+
+<!-- ══ 4. AI PLATFORMS ══ -->
+<div class="acc open" id="acc-ai">
+  <div class="acc-head" onclick="toggleAcc('acc-ai')">
+    <div class="acc-title"><span class="acc-dot"></span>AI Platforms</div>
+    <div class="acc-right"><span class="acc-meta">Pick any</span><span class="acc-arrow">▼</span></div>
+  </div>
+  <div class="acc-body">
+    <div class="ai-grid">
+      <div class="ai-btn sel" data-ai="Midjourney"       onclick="toggleAI(this)"><div class="ai-dot" style="background:#5865f2"></div><div class="ai-name">Midjourney</div></div>
+      <div class="ai-btn sel" data-ai="DALL·E 3"         onclick="toggleAI(this)"><div class="ai-dot" style="background:#10a37f"></div><div class="ai-name">DALL·E 3</div></div>
+      <div class="ai-btn"     data-ai="Stable Diffusion" onclick="toggleAI(this)"><div class="ai-dot" style="background:#ff6b35"></div><div class="ai-name">Stable Diff.</div></div>
+      <div class="ai-btn"     data-ai="Adobe Firefly"    onclick="toggleAI(this)"><div class="ai-dot" style="background:#ff2bc2"></div><div class="ai-name">Firefly</div></div>
+      <div class="ai-btn"     data-ai="Ideogram"         onclick="toggleAI(this)"><div class="ai-dot" style="background:#facc15"></div><div class="ai-name">Ideogram</div></div>
+      <div class="ai-btn"     data-ai="Leonardo AI"      onclick="toggleAI(this)"><div class="ai-dot" style="background:#a855f7"></div><div class="ai-name">Leonardo</div></div>
+      <div class="ai-btn"     data-ai="Bing Image"       onclick="toggleAI(this)"><div class="ai-dot" style="background:#0078d4"></div><div class="ai-name">Bing</div></div>
+      <div class="ai-btn"     data-ai="Flux"             onclick="toggleAI(this)"><div class="ai-dot" style="background:#ff4488"></div><div class="ai-name">Flux</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 5. ART STYLE ══ -->
+<div class="acc open" id="acc-style">
+  <div class="acc-head" onclick="toggleAcc('acc-style')">
+    <div class="acc-title"><span class="acc-dot"></span>Art Style</div>
+    <div class="acc-right"><span class="acc-meta" id="styleSummary">None</span><span class="acc-arrow">▼</span></div>
+  </div>
+  <div class="acc-body">
+    <div class="cat-strip" id="styleCatStrip">
+      <div class="cp active" onclick="showSCat(this,'cartoon')">📺 Cartoons</div>
+      <div class="cp" onclick="showSCat(this,'street')">✊ Street/Poster</div>
+      <div class="cp" onclick="showSCat(this,'comic')">💥 Comics</div>
+      <div class="cp" onclick="showSCat(this,'retro')">🕹️ Retro/Vintage</div>
+      <div class="cp" onclick="showSCat(this,'digital')">💻 Digital</div>
+      <div class="cp" onclick="showSCat(this,'fineart')">🎨 Fine Art</div>
+      <div class="cp" onclick="showSCat(this,'photo')">📷 Photo/Real</div>
+      <div class="cp" onclick="showSCat(this,'fantasy')">🐉 Fantasy/Sci-Fi</div>
+      <div class="cp" onclick="showSCat(this,'music')">🎵 Music &amp; Genre</div>
+      <div class="cp" onclick="showSCat(this,'wrestling')">🤼 Wrestling</div>
+      <div class="cp" onclick="showSCat(this,'logo')">🔷 Logo Styles</div>
+    </div>
+
+    <!-- CARTOONS -->
+    <div class="scat show" id="scat-cartoon">
+      <div class="sub-l">Classic TV</div>
+      <div class="pills">
+        <div class="pill" data-c="on-c" onclick="stylePick(this)">Looney Tunes</div>
+        <div class="pill" data-c="on-c" onclick="stylePick(this)">Animaniacs</div>
+        <div class="pill" data-c="on-c" onclick="stylePick(this)">Tom &amp; Jerry</div>
+        <div class="pill" data-c="on-c" onclick="stylePick(this)">Scooby-Doo</div>
+        <div class="pill" data-c="on-c" onclick="stylePick(this)">Flintstones</div>
+        <div class="pill" data-c="on-c" onclick="stylePick(this)">Jetsons</div>
+        <div class="pill" data-c="on-c" onclick="stylePick(this)">Hanna-Barbera</div>
+        <div class="pill" data-c="on-c" onclick="stylePick(this)">Popeye</div>
+        <div class="pill" data-c="on-c" onclick="stylePick(this)">Pink Panther</div>
+        <div class="pill" data-c="on-c" onclick="stylePick(this)">Rocky &amp; Bullwinkle</div>
+      </div>
+      <div class="sub-l">Adult Animation</div>
+      <div class="pills">
+        <div class="pill" data-c="on-y" onclick="stylePick(this)">The Simpsons</div>
+        <div class="pill" data-c="on-y" onclick="stylePick(this)">Family Guy</div>
+        <div class="pill" data-c="on-y" onclick="stylePick(this)">Futurama</div>
+        <div class="pill" data-c="on-y" onclick="stylePick(this)">Bob's Burgers</div>
+        <div class="pill" data-c="on-y" onclick="stylePick(this)">King of the Hill</div>
+        <div class="pill" data-c="on-y" onclick="stylePick(this)">Archer</div>
+        <div class="pill" data-c="on-y" onclick="stylePick(this)">South Park</div>
+        <div class="pill" data-c="on-y" onclick="stylePick(this)">Rick and Morty</div>
+        <div class="pill" data-c="on-y" onclick="stylePick(this)">Bojack Horseman</div>
+      </div>
+      <div class="sub-l">Cartoon Network / Nickelodeon</div>
+      <div class="pills">
+        <div class="pill" data-c="on-g" onclick="stylePick(this)">Adventure Time</div>
+        <div class="pill" data-c="on-g" onclick="stylePick(this)">Gravity Falls</div>
+        <div class="pill" data-c="on-g" onclick="stylePick(this)">Steven Universe</div>
+        <div class="pill" data-c="on-g" onclick="stylePick(this)">Samurai Jack</div>
+        <div class="pill" data-c="on-g" onclick="stylePick(this)">Dexter's Lab</div>
+        <div class="pill" data-c="on-g" onclick="stylePick(this)">Powerpuff Girls</div>
+        <div class="pill" data-c="on-g" onclick="stylePick(this)">Courage the Dog</div>
+        <div class="pill" data-c="on-g" onclick="stylePick(this)">Invader Zim</div>
+        <div class="pill" data-c="on-g" onclick="stylePick(this)">Ren &amp; Stimpy</div>
+        <div class="pill" data-c="on-g" onclick="stylePick(this)">Rugrats</div>
+        <div class="pill" data-c="on-g" onclick="stylePick(this)">Regular Show</div>
+      </div>
+      <div class="sub-l">Anime</div>
+      <div class="pills">
+        <div class="pill" data-c="on-p" onclick="stylePick(this)">Dragon Ball Z</div>
+        <div class="pill" data-c="on-p" onclick="stylePick(this)">Naruto</div>
+        <div class="pill" data-c="on-p" onclick="stylePick(this)">One Piece</div>
+        <div class="pill" data-c="on-p" onclick="stylePick(this)">Attack on Titan</div>
+        <div class="pill" data-c="on-p" onclick="stylePick(this)">Studio Ghibli</div>
+        <div class="pill" data-c="on-p" onclick="stylePick(this)">Akira</div>
+        <div class="pill" data-c="on-p" onclick="stylePick(this)">Demon Slayer</div>
+        <div class="pill" data-c="on-p" onclick="stylePick(this)">JoJo's Bizarre</div>
+        <div class="pill" data-c="on-p" onclick="stylePick(this)">Evangelion</div>
+        <div class="pill" data-c="on-p" onclick="stylePick(this)">Cowboy Bebop</div>
+        <div class="pill" data-c="on-p" onclick="stylePick(this)">Bleach</div>
+        <div class="pill" data-c="on-p" onclick="stylePick(this)">Sailor Moon</div>
+      </div>
+      <div class="sub-l">Disney / Pixar</div>
+      <div class="pills">
+        <div class="pill" data-c="on-k" onclick="stylePick(this)">Classic Disney</div>
+        <div class="pill" data-c="on-k" onclick="stylePick(this)">Pixar 3D</div>
+        <div class="pill" data-c="on-k" onclick="stylePick(this)">Disney Renaissance</div>
+        <div class="pill" data-c="on-k" onclick="stylePick(this)">Disney Villain Style</div>
+      </div>
+    </div>
+
+    <!-- STREET -->
+    <div class="scat" id="scat-street">
+      <div class="pills">
+        <div class="pill" data-c="on" onclick="stylePick(this)">Obey / Shepard Fairey</div>
+        <div class="pill" data-c="on" onclick="stylePick(this)">Soviet Propaganda</div>
+        <div class="pill" data-c="on" onclick="stylePick(this)">WW2 Propaganda</div>
+        <div class="pill" data-c="on" onclick="stylePick(this)">Maoist Propaganda</div>
+        <div class="pill" data-c="on" onclick="stylePick(this)">Cuban Propaganda</div>
+        <div class="pill" data-c="on" onclick="stylePick(this)">Constructivist</div>
+        <div class="pill" data-c="on" onclick="stylePick(this)">Banksy Stencil</div>
+        <div class="pill" data-c="on" onclick="stylePick(this)">Graffiti Wild Style</div>
+        <div class="pill" data-c="on" onclick="stylePick(this)">Street Art Mural</div>
+        <div class="pill" data-c="on" onclick="stylePick(this)">Screen Print Poster</div>
+        <div class="pill" data-c="on" onclick="stylePick(this)">Punk Zine Collage</div>
+        <div class="pill" data-c="on" onclick="stylePick(this)">Concert Poster</div>
+        <div class="pill" data-c="on" onclick="stylePick(this)">3-Color Risograph</div>
+        <div class="pill" data-c="on" onclick="stylePick(this)">Underground Comix</div>
+        <div class="pill" data-c="on" onclick="stylePick(this)">Lowbrow Pop Surrealism</div>
+        <div class="pill" data-c="on" onclick="stylePick(this)">Skate Deck Art</div>
+        <div class="pill" data-c="on" onclick="stylePick(this)">Hot Rod Kustom Art</div>
+        <div class="pill" data-c="on" onclick="stylePick(this)">Big Daddy Ed Roth</div>
+        <div class="pill" data-c="on" onclick="stylePick(this)">Black Light Poster</div>
+        <div class="pill" data-c="on" onclick="stylePick(this)">NYC Subway Graffiti</div>
+      </div>
+    </div>
+
+    <!-- COMICS -->
+    <div class="scat" id="scat-comic">
+      <div class="pills">
+        <div class="pill" data-c="on-y" onclick="stylePick(this)">Marvel Silver Age</div>
+        <div class="pill" data-c="on-y" onclick="stylePick(this)">DC Bronze Age</div>
+        <div class="pill" data-c="on-y" onclick="stylePick(this)">Jack Kirby</div>
+        <div class="pill" data-c="on-y" onclick="stylePick(this)">Jim Lee Style</div>
+        <div class="pill" data-c="on-y" onclick="stylePick(this)">Todd McFarlane</div>
+        <div class="pill" data-c="on-y" onclick="stylePick(this)">Frank Miller Sin City</div>
+        <div class="pill" data-c="on-y" onclick="stylePick(this)">Mike Mignola</div>
+        <div class="pill" data-c="on-y" onclick="stylePick(this)">Alex Ross Painted</div>
+        <div class="pill" data-c="on-y" onclick="stylePick(this)">Manga B&amp;W Screentone</div>
+        <div class="pill" data-c="on-y" onclick="stylePick(this)">Shonen Jump Style</div>
+        <div class="pill" data-c="on-y" onclick="stylePick(this)">EC Horror Comics</div>
+        <div class="pill" data-c="on-y" onclick="stylePick(this)">Golden Age Comics</div>
+        <div class="pill" data-c="on-y" onclick="stylePick(this)">Roy Lichtenstein Pop Art</div>
+      </div>
+    </div>
+
+    <!-- RETRO -->
+    <div class="scat" id="scat-retro">
+      <div class="pills">
+        <div class="pill" data-c="on-p" onclick="stylePick(this)">1920s Art Deco</div>
+        <div class="pill" data-c="on-p" onclick="stylePick(this)">1940s Pin-Up</div>
+        <div class="pill" data-c="on-p" onclick="stylePick(this)">1940s Pulp Sci-Fi</div>
+        <div class="pill" data-c="on-p" onclick="stylePick(this)">1950s Americana</div>
+        <div class="pill" data-c="on-p" onclick="stylePick(this)">1950s Atomic Age</div>
+        <div class="pill" data-c="on-p" onclick="stylePick(this)">1960s Psychedelic</div>
+        <div class="pill" data-c="on-p" onclick="stylePick(this)">1970s Blaxploitation</div>
+        <div class="pill" data-c="on-p" onclick="stylePick(this)">1980s Retro-Futurism</div>
+        <div class="pill" data-c="on-p" onclick="stylePick(this)">Vaporwave</div>
+        <div class="pill" data-c="on-p" onclick="stylePick(this)">Synthwave</div>
+        <div class="pill" data-c="on-p" onclick="stylePick(this)">Outrun</div>
+        <div class="pill" data-c="on-p" onclick="stylePick(this)">Soviet Realism</div>
+        <div class="pill" data-c="on-p" onclick="stylePick(this)">Vintage Travel Poster</div>
+        <div class="pill" data-c="on-p" onclick="stylePick(this)">Old West Wanted Poster</div>
+        <div class="pill" data-c="on-p" onclick="stylePick(this)">Circus Sideshow Poster</div>
+        <div class="pill" data-c="on-p" onclick="stylePick(this)">Tattoo Flash Sheet</div>
+        <div class="pill" data-c="on-p" onclick="stylePick(this)">Pixel Art 8-bit</div>
+        <div class="pill" data-c="on-p" onclick="stylePick(this)">Ukiyo-e Woodblock</div>
+        <div class="pill" data-c="on-p" onclick="stylePick(this)">Victorian Engraving</div>
+      </div>
+    </div>
+
+    <!-- DIGITAL -->
+    <div class="scat" id="scat-digital">
+      <div class="pills">
+        <div class="pill" data-c="on-g" onclick="stylePick(this)">Cel-Shaded 3D</div>
+        <div class="pill" data-c="on-g" onclick="stylePick(this)">Hyperrealistic CGI</div>
+        <div class="pill" data-c="on-g" onclick="stylePick(this)">Low Poly</div>
+        <div class="pill" data-c="on-g" onclick="stylePick(this)">Neon Noir</div>
+        <div class="pill" data-c="on-g" onclick="stylePick(this)">Cyberpunk</div>
+        <div class="pill" data-c="on-g" onclick="stylePick(this)">Glitch Art</div>
+        <div class="pill" data-c="on-g" onclick="stylePick(this)">Vector Flat</div>
+        <div class="pill" data-c="on-g" onclick="stylePick(this)">Minimalist Vector</div>
+        <div class="pill" data-c="on-g" onclick="stylePick(this)">Double Exposure</div>
+        <div class="pill" data-c="on-g" onclick="stylePick(this)">Duotone</div>
+        <div class="pill" data-c="on-g" onclick="stylePick(this)">Holographic</div>
+        <div class="pill" data-c="on-g" onclick="stylePick(this)">Brutalist Graphic</div>
+        <div class="pill" data-c="on-g" onclick="stylePick(this)">Bauhaus</div>
+        <div class="pill" data-c="on-g" onclick="stylePick(this)">Memphis Design</div>
+        <div class="pill" data-c="on-g" onclick="stylePick(this)">Sticker Art</div>
+        <div class="pill" data-c="on-g" onclick="stylePick(this)">Chiaroscuro Digital</div>
+        <div class="pill" data-c="on-g" onclick="stylePick(this)">Cyber-Heraldry</div>
+        <div class="pill" data-c="on-g" onclick="stylePick(this)">Azulejo Modern</div>
+      </div>
+    </div>
+
+    <!-- FINE ART -->
+    <div class="scat" id="scat-fineart">
+      <div class="pills">
+        <div class="pill" data-c="on-k" onclick="stylePick(this)">Oil Painting Classical</div>
+        <div class="pill" data-c="on-k" onclick="stylePick(this)">Impressionism</div>
+        <div class="pill" data-c="on-k" onclick="stylePick(this)">Expressionism</div>
+        <div class="pill" data-c="on-k" onclick="stylePick(this)">Surrealism</div>
+        <div class="pill" data-c="on-k" onclick="stylePick(this)">Pop Art</div>
+        <div class="pill" data-c="on-k" onclick="stylePick(this)">Andy Warhol Screen Print</div>
+        <div class="pill" data-c="on-k" onclick="stylePick(this)">Keith Haring</div>
+        <div class="pill" data-c="on-k" onclick="stylePick(this)">Basquiat Neo-Expressionism</div>
+        <div class="pill" data-c="on-k" onclick="stylePick(this)">Norman Rockwell</div>
+        <div class="pill" data-c="on-k" onclick="stylePick(this)">Frank Frazetta</div>
+        <div class="pill" data-c="on-k" onclick="stylePick(this)">Mucha Art Nouveau</div>
+        <div class="pill" data-c="on-k" onclick="stylePick(this)">Gustav Klimt</div>
+        <div class="pill" data-c="on-k" onclick="stylePick(this)">Frida Kahlo Style</div>
+        <div class="pill" data-c="on-k" onclick="stylePick(this)">Diego Rivera Mural</div>
+        <div class="pill" data-c="on-k" onclick="stylePick(this)">Watercolor Fine Art</div>
+        <div class="pill" data-c="on-k" onclick="stylePick(this)">Ink Wash / Sumi-e</div>
+        <div class="pill" data-c="on-k" onclick="stylePick(this)">Woodcut Folk Art</div>
+      </div>
+    </div>
+
+    <!-- PHOTO -->
+    <div class="scat" id="scat-photo">
+      <div class="pills">
+        <div class="pill" data-c="on" onclick="stylePick(this)">Photorealistic</div>
+        <div class="pill" data-c="on" onclick="stylePick(this)">Studio Portrait</div>
+        <div class="pill" data-c="on" onclick="stylePick(this)">Cinematic Film Still</div>
+        <div class="pill" data-c="on" onclick="stylePick(this)">Black &amp; White Photography</div>
+        <div class="pill" data-c="on" onclick="stylePick(this)">Film Grain / Analog</div>
+        <div class="pill" data-c="on" onclick="stylePick(this)">Action Photography</div>
+        <div class="pill" data-c="on" onclick="stylePick(this)">Bokeh Portrait</div>
+        <div class="pill" data-c="on" onclick="stylePick(this)">Long Exposure</div>
+        <div class="pill" data-c="on" onclick="stylePick(this)">Tilt-Shift Miniature</div>
+      </div>
+    </div>
+
+    <!-- FANTASY -->
+    <div class="scat" id="scat-fantasy">
+      <div class="pills">
+        <div class="pill" data-c="on-c" onclick="stylePick(this)">High Fantasy Illustration</div>
+        <div class="pill" data-c="on-c" onclick="stylePick(this)">Dark Fantasy</div>
+        <div class="pill" data-c="on-c" onclick="stylePick(this)">D&amp;D Monster Manual</div>
+        <div class="pill" data-c="on-c" onclick="stylePick(this)">Magic The Gathering Card</div>
+        <div class="pill" data-c="on-c" onclick="stylePick(this)">Boris Vallejo Fantasy</div>
+        <div class="pill" data-c="on-c" onclick="stylePick(this)">Heavy Metal Magazine</div>
+        <div class="pill" data-c="on-c" onclick="stylePick(this)">Retro Sci-Fi Paperback</div>
+        <div class="pill" data-c="on-c" onclick="stylePick(this)">Steampunk</div>
+        <div class="pill" data-c="on-c" onclick="stylePick(this)">Cyberpunk 2077 Art</div>
+        <div class="pill" data-c="on-c" onclick="stylePick(this)">Warhammer 40K</div>
+        <div class="pill" data-c="on-c" onclick="stylePick(this)">Video Game Concept Art</div>
+      </div>
+    </div>
+
+    <!-- ★ MUSIC & GENRE ★ -->
+    <div class="scat" id="scat-music">
+      <div class="sub-l gold">By Genre — Visual Identity</div>
+      <div class="pills">
+        <div class="pill" data-c="on-gold" onclick="stylePick(this)">Soca / Carnival</div>
+        <div class="pill" data-c="on-gold" onclick="stylePick(this)">EDM / Electronic</div>
+        <div class="pill" data-c="on-gold" onclick="stylePick(this)">Hip-Hop / Rap</div>
+        <div class="pill" data-c="on-gold" onclick="stylePick(this)">R&amp;B / Soul</div>
+        <div class="pill" data-c="on-gold" onclick="stylePick(this)">Reggae / Dancehall</div>
+        <div class="pill" data-c="on-gold" onclick="stylePick(this)">Afrobeats / Afropop</div>
+        <div class="pill" data-c="on-gold" onclick="stylePick(this)">Jazz / Blues</div>
+        <div class="pill" data-c="on-gold" onclick="stylePick(this)">Rock / Alternative</div>
+        <div class="pill" data-c="on-gold" onclick="stylePick(this)">Heavy Metal / Thrash</div>
+        <div class="pill" data-c="on-gold" onclick="stylePick(this)">Death Metal / Black Metal</div>
+        <div class="pill" data-c="on-gold" onclick="stylePick(this)">Punk / Hardcore</div>
+        <div class="pill" data-c="on-gold" onclick="stylePick(this)">Classic Rock</div>
+        <div class="pill" data-c="on-gold" onclick="stylePick(this)">Gospel / Worship</div>
+        <div class="pill" data-c="on-gold" onclick="stylePick(this)">Latin / Reggaeton</div>
+        <div class="pill" data-c="on-gold" onclick="stylePick(this)">Drum &amp; Bass / Jungle</div>
+        <div class="pill" data-c="on-gold" onclick="stylePick(this)">House / Techno / Trance</div>
+        <div class="pill" data-c="on-gold" onclick="stylePick(this)">Lo-Fi / Chillwave</div>
+        <div class="pill" data-c="on-gold" onclick="stylePick(this)">Country / Americana</div>
+        <div class="pill" data-c="on-gold" onclick="stylePick(this)">Classical / Orchestral</div>
+      </div>
+      <div class="sub-l gold">By Era — Album Art</div>
+      <div class="pills">
+        <div class="pill" data-c="on-y" onclick="stylePick(this)">70s Funk &amp; Soul Album Art</div>
+        <div class="pill" data-c="on-y" onclick="stylePick(this)">80s Synth Pop Cover</div>
+        <div class="pill" data-c="on-y" onclick="stylePick(this)">80s Metal Album Cover</div>
+        <div class="pill" data-c="on-y" onclick="stylePick(this)">90s Hip-Hop CD Cover</div>
+        <div class="pill" data-c="on-y" onclick="stylePick(this)">90s Rave Flyer</div>
+        <div class="pill" data-c="on-y" onclick="stylePick(this)">90s Grunge Album Art</div>
+        <div class="pill" data-c="on-y" onclick="stylePick(this)">2000s Club Promo</div>
+        <div class="pill" data-c="on-y" onclick="stylePick(this)">2010s EDM Festival Poster</div>
+        <div class="pill" data-c="on-y" onclick="stylePick(this)">Modern Streaming Cover</div>
+        <div class="pill" data-c="on-y" onclick="stylePick(this)">Vinyl Record LP Art</div>
+      </div>
+      <div class="sub-l gold">Visual Elements</div>
+      <div class="pills">
+        <div class="pill" data-c="on-c" onclick="stylePick(this)">Waveform / Frequency Visual</div>
+        <div class="pill" data-c="on-c" onclick="stylePick(this)">Equalizer Bars</div>
+        <div class="pill" data-c="on-c" onclick="stylePick(this)">Vinyl Record Aesthetic</div>
+        <div class="pill" data-c="on-c" onclick="stylePick(this)">DJ Booth / Turntable Scene</div>
+        <div class="pill" data-c="on-c" onclick="stylePick(this)">Festival Main Stage</div>
+        <div class="pill" data-c="on-c" onclick="stylePick(this)">Concert Crowd Energy</div>
+        <div class="pill" data-c="on-c" onclick="stylePick(this)">Cassette Tape Nostalgia</div>
+        <div class="pill" data-c="on-c" onclick="stylePick(this)">Holographic CD Shimmer</div>
+        <div class="pill" data-c="on-c" onclick="stylePick(this)">Neon Club Lighting</div>
+        <div class="pill" data-c="on-c" onclick="stylePick(this)">Studio Mixing Board</div>
+        <div class="pill" data-c="on-c" onclick="stylePick(this)">Laser Light Show</div>
+        <div class="pill" data-c="on-c" onclick="stylePick(this)">Smoke Machine Haze</div>
+        <div class="pill" data-c="on-c" onclick="stylePick(this)">Carnival Mas Band</div>
+        <div class="pill" data-c="on-c" onclick="stylePick(this)">Pyrotechnic Fireworks</div>
+      </div>
+      <div class="sub-l gold">Rock Band Specific</div>
+      <div class="pills">
+        <div class="pill" data-c="on-p" onclick="stylePick(this)">Classic Rock Band Poster</div>
+        <div class="pill" data-c="on-p" onclick="stylePick(this)">Arena Rock Stage Shot</div>
+        <div class="pill" data-c="on-p" onclick="stylePick(this)">Heavy Metal Illustrated Cover</div>
+        <div class="pill" data-c="on-p" onclick="stylePick(this)">Punk Band Flyer</div>
+        <div class="pill" data-c="on-p" onclick="stylePick(this)">Psychedelic Rock Poster</div>
+        <div class="pill" data-c="on-p" onclick="stylePick(this)">Metal Skull &amp; Fire Art</div>
+        <div class="pill" data-c="on-p" onclick="stylePick(this)">Black Metal Atmospheric</div>
+        <div class="pill" data-c="on-p" onclick="stylePick(this)">Death Metal Gore Illustration</div>
+        <div class="pill" data-c="on-p" onclick="stylePick(this)">Thrash Metal Aggressive</div>
+        <div class="pill" data-c="on-p" onclick="stylePick(this)">Hair Metal 80s Glam</div>
+        <div class="pill" data-c="on-p" onclick="stylePick(this)">Prog Rock Epic Fantasy</div>
+        <div class="pill" data-c="on-p" onclick="stylePick(this)">Grunge Distressed</div>
+        <div class="pill" data-c="on-p" onclick="stylePick(this)">Indie Rock Minimalist</div>
+        <div class="pill" data-c="on-p" onclick="stylePick(this)">Emo / Post-Hardcore</div>
+      </div>
+    </div>
+
+    <!-- ★ WRESTLING ★ -->
+    <div class="scat" id="scat-wrestling">
+      <div class="sub-l red">Official WWE Shop Styles</div>
+      <div class="pills">
+        <div class="pill" data-c="on" onclick="stylePick(this)">WWE Shop Official Merch</div>
+        <div class="pill" data-c="on" onclick="stylePick(this)">Attitude Era Tee</div>
+        <div class="pill" data-c="on" onclick="stylePick(this)">Modern WWE Shop Style</div>
+        <div class="pill" data-c="on" onclick="stylePick(this)">Championship Belt Graphic</div>
+        <div class="pill" data-c="on" onclick="stylePick(this)">WrestleMania Event Tee</div>
+        <div class="pill" data-c="on" onclick="stylePick(this)">Hall of Fame Edition</div>
+        <div class="pill" data-c="on" onclick="stylePick(this)">NXT Underground</div>
+        <div class="pill" data-c="on" onclick="stylePick(this)">AEW Double or Nothing</div>
+        <div class="pill" data-c="on" onclick="stylePick(this)">ROH Pure Wrestling</div>
+        <div class="pill" data-c="on" onclick="stylePick(this)">Lucha Underground</div>
+      </div>
+      <div class="sub-l red">Legend / Era Treatments</div>
+      <div class="pills">
+        <div class="pill" data-c="on-y" onclick="stylePick(this)">Hulkamania 80s Style</div>
+        <div class="pill" data-c="on-y" onclick="stylePick(this)">Stone Cold 3:16 Skull</div>
+        <div class="pill" data-c="on-y" onclick="stylePick(this)">DX Green Glow</div>
+        <div class="pill" data-c="on-y" onclick="stylePick(this)">nWo Hollywood Black &amp; White</div>
+        <div class="pill" data-c="on-y" onclick="stylePick(this)">Undertaker Ministry Gothic</div>
+        <div class="pill" data-c="on-y" onclick="stylePick(this)">CM Punk Straight Edge Punk</div>
+        <div class="pill" data-c="on-y" onclick="stylePick(this)">The Rock Brahma Bull</div>
+        <div class="pill" data-c="on-y" onclick="stylePick(this)">Ric Flair WOOOOO Glam</div>
+        <div class="pill" data-c="on-y" onclick="stylePick(this)">Macho Man Savage Madness</div>
+        <div class="pill" data-c="on-y" onclick="stylePick(this)">Ultimate Warrior Intensity</div>
+        <div class="pill" data-c="on-y" onclick="stylePick(this)">Mick Foley Have a Nice Day</div>
+        <div class="pill" data-c="on-y" onclick="stylePick(this)">Bret Hart Pink &amp; Black</div>
+        <div class="pill" data-c="on-y" onclick="stylePick(this)">Goldberg Who's Next</div>
+        <div class="pill" data-c="on-y" onclick="stylePick(this)">Kevin Owens Prize Fighter</div>
+        <div class="pill" data-c="on-y" onclick="stylePick(this)">Roman Reigns Tribal Chief</div>
+        <div class="pill" data-c="on-y" onclick="stylePick(this)">Cody Rhodes American Nightmare</div>
+      </div>
+      <div class="sub-l red">Spoof / Parody Treatments</div>
+      <div class="pills">
+        <div class="pill" data-c="on-g" onclick="stylePick(this)">Custom Name in nWo Style</div>
+        <div class="pill" data-c="on-g" onclick="stylePick(this)">Custom Name in Stone Cold Style</div>
+        <div class="pill" data-c="on-g" onclick="stylePick(this)">Custom Name in Undertaker Gothic</div>
+        <div class="pill" data-c="on-g" onclick="stylePick(this)">Custom Name in Hulkamania</div>
+        <div class="pill" data-c="on-g" onclick="stylePick(this)">Custom Belt with Name Plate</div>
+        <div class="pill" data-c="on-g" onclick="stylePick(this)">DJ as Entrance Pyro Graphic</div>
+        <div class="pill" data-c="on-g" onclick="stylePick(this)">Finishing Move Named Graphic</div>
+        <div class="pill" data-c="on-g" onclick="stylePick(this)">Manager Valet Promo Shot</div>
+        <div class="pill" data-c="on-g" onclick="stylePick(this)">Tag Team Partner Split Graphic</div>
+        <div class="pill" data-c="on-g" onclick="stylePick(this)">Heel Turn Dark Side Version</div>
+      </div>
+      <div class="sub-l red">Visual Elements &amp; Finishes</div>
+      <div class="pills">
+        <div class="pill" data-c="on-c" onclick="stylePick(this)">Foil / Metallic Print Simulation</div>
+        <div class="pill" data-c="on-c" onclick="stylePick(this)">Distressed Vintage Wash</div>
+        <div class="pill" data-c="on-c" onclick="stylePick(this)">Glow in the Dark Aesthetic</div>
+        <div class="pill" data-c="on-c" onclick="stylePick(this)">Event Date &amp; Location Text</div>
+        <div class="pill" data-c="on-c" onclick="stylePick(this)">Entrance Pyro Explosion</div>
+        <div class="pill" data-c="on-c" onclick="stylePick(this)">Smoke &amp; Spotlight Effect</div>
+        <div class="pill" data-c="on-c" onclick="stylePick(this)">Championship Gold Foil</div>
+        <div class="pill" data-c="on-c" onclick="stylePick(this)">Crowd Silhouette Background</div>
+        <div class="pill" data-c="on-c" onclick="stylePick(this)">Lightning Strike Effect</div>
+        <div class="pill" data-c="on-c" onclick="stylePick(this)">Arena Titantron Screen</div>
+      </div>
+    </div>
+
+    <!-- LOGO -->
+    <div class="scat" id="scat-logo">
+      <div class="sub-l">Mark Type</div>
+      <div class="pills">
+        <div class="pill" data-c="on"   onclick="stylePick(this)">Wordmark Only</div>
+        <div class="pill" data-c="on"   onclick="stylePick(this)">Lettermark / Monogram</div>
+        <div class="pill" data-c="on"   onclick="stylePick(this)">Pictorial Mark</div>
+        <div class="pill" data-c="on"   onclick="stylePick(this)">Abstract Mark</div>
+        <div class="pill" data-c="on-y" onclick="stylePick(this)">Badge / Crest Logo</div>
+        <div class="pill" data-c="on-y" onclick="stylePick(this)">Emblem / Seal</div>
+        <div class="pill" data-c="on-y" onclick="stylePick(this)">Mascot Logo</div>
+        <div class="pill" data-c="on-y" onclick="stylePick(this)">Shield Logo</div>
+      </div>
+      <div class="sub-l">Logo Aesthetic</div>
+      <div class="pills">
+        <div class="pill" data-c="on-c" onclick="stylePick(this)">Minimalist Modern</div>
+        <div class="pill" data-c="on-c" onclick="stylePick(this)">Flat Design 2-Color</div>
+        <div class="pill" data-c="on-c" onclick="stylePick(this)">Negative Space</div>
+        <div class="pill" data-c="on-g" onclick="stylePick(this)">Vintage / Retro Badge</div>
+        <div class="pill" data-c="on-g" onclick="stylePick(this)">Distressed / Grunge</div>
+        <div class="pill" data-c="on-g" onclick="stylePick(this)">Woodcut / Linocut</div>
+        <div class="pill" data-c="on-p" onclick="stylePick(this)">Luxury / Gold Foil</div>
+        <div class="pill" data-c="on-p" onclick="stylePick(this)">Art Deco Symmetry</div>
+        <div class="pill" data-c="on-p" onclick="stylePick(this)">Heraldic / Coat of Arms</div>
+        <div class="pill" data-c="on-k" onclick="stylePick(this)">Streetwear / Hype</div>
+        <div class="pill" data-c="on-k" onclick="stylePick(this)">Sports Team / Athletic</div>
+        <div class="pill" data-c="on-k" onclick="stylePick(this)">Esports / Gaming Clan</div>
+        <div class="pill" data-c="on-k" onclick="stylePick(this)">Metal Band Logo</div>
+        <div class="pill" data-c="on-k" onclick="stylePick(this)">Biker / MC Patch</div>
+        <div class="pill" data-c="on"   onclick="stylePick(this)">Celtic Knotwork</div>
+        <div class="pill" data-c="on"   onclick="stylePick(this)">Wax Seal / Sigil</div>
+        <div class="pill" data-c="on-y" onclick="stylePick(this)">Tattoo Style</div>
+        <div class="pill" data-c="on-c" onclick="stylePick(this)">Neon Sign Style</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 6. MOOD + POSE ══ -->
+<div class="acc" id="acc-mood">
+  <div class="acc-head" onclick="toggleAcc('acc-mood')">
+    <div class="acc-title"><span class="acc-dot"></span>Mood &amp; Pose</div>
+    <div class="acc-right"><span class="acc-meta">Multi-select</span><span class="acc-arrow">▼</span></div>
+  </div>
+  <div class="acc-body">
+    <div class="sl">Subject Context</div>
+    <div class="pills" id="subjCtxPills">
+      <div class="pill on" data-c="on"   onclick="solo(this,'subjCtxPills')">Human / Humanoid</div>
+      <div class="pill"    data-c="on-y" onclick="solo(this,'subjCtxPills')">Animal / Creature</div>
+      <div class="pill"    data-c="on-c" onclick="solo(this,'subjCtxPills')">Robot / Mech</div>
+      <div class="pill"    data-c="on-g" onclick="solo(this,'subjCtxPills')">Object / Product</div>
+      <div class="pill"    data-c="on-p" onclick="solo(this,'subjCtxPills')">Abstract</div>
+      <div class="pill"    data-c="on-k" onclick="solo(this,'subjCtxPills')">N/A — No Pose</div>
+    </div>
+    <div class="sl">Mood / Vibe</div>
+    <div class="pills" id="moodPills">
+      <div class="pill" data-c="on"   onclick="tog(this)">Heroic</div>
+      <div class="pill" data-c="on"   onclick="tog(this)">Badass</div>
+      <div class="pill" data-c="on"   onclick="tog(this)">Menacing</div>
+      <div class="pill" data-c="on"   onclick="tog(this)">Confident</div>
+      <div class="pill" data-c="on"   onclick="tog(this)">Rebellious</div>
+      <div class="pill" data-c="on-y" onclick="tog(this)">Funny / Comedic</div>
+      <div class="pill" data-c="on-y" onclick="tog(this)">Goofy</div>
+      <div class="pill" data-c="on-c" onclick="tog(this)">Mysterious</div>
+      <div class="pill" data-c="on-g" onclick="tog(this)">Intense</div>
+      <div class="pill" data-c="on-g" onclick="tog(this)">Triumphant</div>
+      <div class="pill" data-c="on-p" onclick="tog(this)">Nostalgic</div>
+      <div class="pill" data-c="on-k" onclick="tog(this)">Glamorous</div>
+      <div class="pill" data-c="on-k" onclick="tog(this)">Fierce</div>
+      <div class="pill" data-c="on"   onclick="tog(this)">Chill / Relaxed</div>
+      <div class="pill" data-c="on-y" onclick="tog(this)">Sinister</div>
+      <div class="pill" data-c="on-p" onclick="tog(this)">Regal / Majestic</div>
+      <div class="pill" data-c="on-c" onclick="tog(this)">Stoic</div>
+      <div class="pill" data-c="on"   onclick="tog(this)">Aggressive / Angry</div>
+      <div class="pill" data-c="on-g" onclick="tog(this)">Playful</div>
+      <div class="pill" data-c="on-k" onclick="tog(this)">Dark / Brooding</div>
+    </div>
+    <div class="sl">Pose / Composition</div>
+    <div class="pills" id="posePills">
+      <div class="pill on"  data-c="on"   onclick="solo(this,'posePills')">Full Body Standing</div>
+      <div class="pill"     data-c="on"   onclick="solo(this,'posePills')">Half Body</div>
+      <div class="pill"     data-c="on"   onclick="solo(this,'posePills')">Bust / Portrait</div>
+      <div class="pill"     data-c="on-c" onclick="solo(this,'posePills')">Action Pose</div>
+      <div class="pill"     data-c="on-c" onclick="solo(this,'posePills')">Jump / Leap</div>
+      <div class="pill"     data-c="on-c" onclick="solo(this,'posePills')">Running</div>
+      <div class="pill"     data-c="on-y" onclick="solo(this,'posePills')">Power Stance</div>
+      <div class="pill"     data-c="on-y" onclick="solo(this,'posePills')">Arms Crossed</div>
+      <div class="pill"     data-c="on-y" onclick="solo(this,'posePills')">Pointing at Viewer</div>
+      <div class="pill"     data-c="on-g" onclick="solo(this,'posePills')">Side Profile</div>
+      <div class="pill"     data-c="on-p" onclick="solo(this,'posePills')">Low Angle Hero Shot</div>
+      <div class="pill"     data-c="on-k" onclick="solo(this,'posePills')">Silhouette Only</div>
+      <div class="pill"     data-c="on"   onclick="solo(this,'posePills')">Centered Symmetrical</div>
+      <div class="pill"     data-c="on-c" onclick="solo(this,'posePills')">Floating / Levitating</div>
+      <div class="pill"     data-c="on-p" onclick="solo(this,'posePills')">N/A — No Pose</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 7. COLOR + BG ══ -->
+<div class="acc" id="acc-color">
+  <div class="acc-head" onclick="toggleAcc('acc-color')">
+    <div class="acc-title"><span class="acc-dot"></span>Color &amp; Background</div>
+    <span class="acc-arrow">▼</span>
+  </div>
+  <div class="acc-body">
+    <div class="sl">Color Palette</div>
+    <div class="pills" id="colorPills">
+      <div class="pill"        data-c="on"      onclick="solo(this,'colorPills')">Black &amp; White</div>
+      <div class="pill"        data-c="on"      onclick="solo(this,'colorPills')">2-Color</div>
+      <div class="pill"        data-c="on"      onclick="solo(this,'colorPills')">3-Color</div>
+      <div class="pill on-y"   data-c="on-y"    onclick="solo(this,'colorPills')">Full Color</div>
+      <div class="pill"        data-c="on-y"    onclick="solo(this,'colorPills')">Vibrant / Neon</div>
+      <div class="pill"        data-c="on-c"    onclick="solo(this,'colorPills')">Muted / Earthy</div>
+      <div class="pill"        data-c="on-p"    onclick="solo(this,'colorPills')">Monochrome Red</div>
+      <div class="pill"        data-c="on-gold" onclick="solo(this,'colorPills')">Gold &amp; Black</div>
+      <div class="pill"        data-c="on-g"    onclick="solo(this,'colorPills')">Blue / Orange Duotone</div>
+      <div class="pill"        data-c="on-k"    onclick="solo(this,'colorPills')">CMYK Print Look</div>
+      <div class="pill"        data-c="on"      onclick="solo(this,'colorPills')">Custom (describe below)</div>
+    </div>
+    <input class="field" type="text" id="customColor" placeholder="e.g. forest green + burnt orange + cream..." style="margin-top:8px;margin-bottom:4px"/>
+    <div class="sl">Background</div>
+    <div class="pills" id="bgPills">
+      <div class="pill on" data-c="on"   onclick="solo(this,'bgPills')">No Background</div>
+      <div class="pill"    data-c="on"   onclick="solo(this,'bgPills')">Transparent</div>
+      <div class="pill"    data-c="on-y" onclick="solo(this,'bgPills')">Solid Color Block</div>
+      <div class="pill"    data-c="on-y" onclick="solo(this,'bgPills')">Halftone Dots</div>
+      <div class="pill"    data-c="on-c" onclick="solo(this,'bgPills')">Urban / City</div>
+      <div class="pill"    data-c="on-c" onclick="solo(this,'bgPills')">Explosion / Burst</div>
+      <div class="pill"    data-c="on-g" onclick="solo(this,'bgPills')">Starburst Rays</div>
+      <div class="pill"    data-c="on-p" onclick="solo(this,'bgPills')">Grunge Texture</div>
+      <div class="pill"    data-c="on-k" onclick="solo(this,'bgPills')">Stars / Galaxy</div>
+      <div class="pill"    data-c="on"   onclick="solo(this,'bgPills')">Flames</div>
+      <div class="pill"    data-c="on-y" onclick="solo(this,'bgPills')">Grid / Blueprint</div>
+      <div class="pill"    data-c="on-g" onclick="solo(this,'bgPills')">Camo Pattern</div>
+      <div class="pill"    data-c="on-p" onclick="solo(this,'bgPills')">Vintage Paper / Aged</div>
+      <div class="pill"    data-c="on-gold" onclick="solo(this,'bgPills')">Gold Foil Texture</div>
+      <div class="pill"    data-c="on-c" onclick="solo(this,'bgPills')">Neon Club Glow</div>
+      <div class="pill"    data-c="on-k" onclick="solo(this,'bgPills')">Pyro / Smoke Stage</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 8. TEXT & TYPOGRAPHY ══ -->
+<div class="acc" id="acc-text">
+  <div class="acc-head" onclick="toggleAcc('acc-text')">
+    <div class="acc-title"><span class="acc-dot"></span>Text &amp; Typography</div>
+    <div class="acc-right"><span class="acc-meta">Optional</span><span class="acc-arrow">▼</span></div>
+  </div>
+  <div class="acc-body">
+    <label class="tog" style="margin-bottom:14px">
+      <input type="checkbox" id="textEnabled" onchange="toggleTxt()"/> Enable text in image
+    </label>
+    <div id="txtSection" style="display:none">
+      <div class="sl">Text Lines <span style="color:var(--dim);font-size:.65rem">(up to 6)</span></div>
+      <div id="textLines">
+        <div class="text-line"><span class="line-label">L1</span><input class="field" type="text" placeholder='e.g. DJ SHAWN LOPES or [diRoadRage Edit]'/></div>
+        <div class="text-line"><span class="line-label">L2</span><input class="field" type="text" placeholder="e.g. EST. 2024 · SOCA COMBOIO"/></div>
+      </div>
+      <button class="add-line-btn" onclick="addTextLine()">+ Add Line</button>
+
+      <div class="info-box" style="margin-top:10px">💡 Text in brackets like <strong>[diRoadRage Edit]</strong> will auto-format as a styled label overlay in the bottom right corner.</div>
+
+      <div class="sl" style="margin-top:12px">Typeface Category</div>
+      <div class="cat-strip" id="fontCatStrip">
+        <div class="cp active" onclick="showFCat(this,'display')">Display</div>
+        <div class="cp" onclick="showFCat(this,'serif')">Serif</div>
+        <div class="cp" onclick="showFCat(this,'slab')">Slab/Western</div>
+        <div class="cp" onclick="showFCat(this,'script')">Script/Hand</div>
+        <div class="cp" onclick="showFCat(this,'graffiti')">Graffiti</div>
+        <div class="cp" onclick="showFCat(this,'horror')">Horror</div>
+        <div class="cp" onclick="showFCat(this,'retro')">Retro</div>
+        <div class="cp" onclick="showFCat(this,'modern')">Modern</div>
+        <div class="cp" onclick="showFCat(this,'metal')">Metal/Rock</div>
+        <div class="cp" onclick="showFCat(this,'decorative')">Decorative</div>
+      </div>
+      <div class="fcat show" id="fcat-display">
+        <div class="pills" id="textStylePills">
+          <div class="pill" data-c="on" onclick="solo(this,'textStylePills')">Bold Condensed Block</div>
+          <div class="pill" data-c="on" onclick="solo(this,'textStylePills')">Impact Heavy</div>
+          <div class="pill" data-c="on" onclick="solo(this,'textStylePills')">Ultra Condensed</div>
+          <div class="pill" data-c="on" onclick="solo(this,'textStylePills')">Stencil Military</div>
+          <div class="pill" data-c="on" onclick="solo(this,'textStylePills')">Varsity Athletic Block</div>
+          <div class="pill" data-c="on" onclick="solo(this,'textStylePills')">All-Caps Gothic</div>
+          <div class="pill" data-c="on" onclick="solo(this,'textStylePills')">Collegiate Outline</div>
+        </div>
+      </div>
+      <div class="fcat" id="fcat-serif" style="display:none">
+        <div class="pills" id="textStylePills">
+          <div class="pill" data-c="on-y" onclick="solo(this,'textStylePills')">Old Style Serif</div>
+          <div class="pill" data-c="on-y" onclick="solo(this,'textStylePills')">Didot Elegant Serif</div>
+          <div class="pill" data-c="on-y" onclick="solo(this,'textStylePills')">Bodoni Contrast Serif</div>
+          <div class="pill" data-c="on-y" onclick="solo(this,'textStylePills')">Trajan Carved Roman</div>
+          <div class="pill" data-c="on-y" onclick="solo(this,'textStylePills')">Blackletter / Old English</div>
+          <div class="pill" data-c="on-y" onclick="solo(this,'textStylePills')">Fraktur Gothic</div>
+        </div>
+      </div>
+      <div class="fcat" id="fcat-slab" style="display:none">
+        <div class="pills" id="textStylePills">
+          <div class="pill" data-c="on-c" onclick="solo(this,'textStylePills')">Slab Serif Heavy</div>
+          <div class="pill" data-c="on-c" onclick="solo(this,'textStylePills')">Western Wanted Style</div>
+          <div class="pill" data-c="on-c" onclick="solo(this,'textStylePills')">Cowboy Woodtype</div>
+          <div class="pill" data-c="on-c" onclick="solo(this,'textStylePills')">Clarendon Slab</div>
+          <div class="pill" data-c="on-c" onclick="solo(this,'textStylePills')">Circus Poster Slab</div>
+          <div class="pill" data-c="on-c" onclick="solo(this,'textStylePills')">Old West Saloon</div>
+        </div>
+      </div>
+      <div class="fcat" id="fcat-script" style="display:none">
+        <div class="pills" id="textStylePills">
+          <div class="pill" data-c="on-g" onclick="solo(this,'textStylePills')">Brush Script Casual</div>
+          <div class="pill" data-c="on-g" onclick="solo(this,'textStylePills')">Handwritten Marker</div>
+          <div class="pill" data-c="on-g" onclick="solo(this,'textStylePills')">Copperplate Script</div>
+          <div class="pill" data-c="on-g" onclick="solo(this,'textStylePills')">Chalk Lettering</div>
+          <div class="pill" data-c="on-g" onclick="solo(this,'textStylePills')">Rough Ink Brush</div>
+          <div class="pill" data-c="on-g" onclick="solo(this,'textStylePills')">Tattoo Script Cursive</div>
+        </div>
+      </div>
+      <div class="fcat" id="fcat-graffiti" style="display:none">
+        <div class="pills" id="textStylePills">
+          <div class="pill" data-c="on-p" onclick="solo(this,'textStylePills')">Graffiti Bubble Letters</div>
+          <div class="pill" data-c="on-p" onclick="solo(this,'textStylePills')">Graffiti Wild Style</div>
+          <div class="pill" data-c="on-p" onclick="solo(this,'textStylePills')">Throw-Up Outline</div>
+          <div class="pill" data-c="on-p" onclick="solo(this,'textStylePills')">3D Chrome Letters</div>
+          <div class="pill" data-c="on-p" onclick="solo(this,'textStylePills')">Freight Train Style</div>
+        </div>
+      </div>
+      <div class="fcat" id="fcat-horror" style="display:none">
+        <div class="pills" id="textStylePills">
+          <div class="pill" data-c="on-k" onclick="solo(this,'textStylePills')">Dripping Blood Letters</div>
+          <div class="pill" data-c="on-k" onclick="solo(this,'textStylePills')">Jagged Horror Font</div>
+          <div class="pill" data-c="on-k" onclick="solo(this,'textStylePills')">Slasher Film Title</div>
+          <div class="pill" data-c="on-k" onclick="solo(this,'textStylePills')">Gothic Bone Lettering</div>
+          <div class="pill" data-c="on-k" onclick="solo(this,'textStylePills')">Decay / Eroded Letters</div>
+          <div class="pill" data-c="on-k" onclick="solo(this,'textStylePills')">Claw Scratch</div>
+        </div>
+      </div>
+      <div class="fcat" id="fcat-retro" style="display:none">
+        <div class="pills" id="textStylePills">
+          <div class="pill" data-c="on" onclick="solo(this,'textStylePills')">1950s Diner Neon</div>
+          <div class="pill" data-c="on" onclick="solo(this,'textStylePills')">1970s Groovy Fat</div>
+          <div class="pill" data-c="on" onclick="solo(this,'textStylePills')">1980s Arcade Pixel</div>
+          <div class="pill" data-c="on" onclick="solo(this,'textStylePills')">Vintage Signage</div>
+          <div class="pill" data-c="on" onclick="solo(this,'textStylePills')">Neon Sign / Tube</div>
+          <div class="pill" data-c="on" onclick="solo(this,'textStylePills')">Art Deco Caps</div>
+          <div class="pill" data-c="on" onclick="solo(this,'textStylePills')">Varsity Letterman</div>
+        </div>
+      </div>
+      <div class="fcat" id="fcat-modern" style="display:none">
+        <div class="pills" id="textStylePills">
+          <div class="pill" data-c="on-c" onclick="solo(this,'textStylePills')">Geometric Sans</div>
+          <div class="pill" data-c="on-c" onclick="solo(this,'textStylePills')">Futuristic Tech</div>
+          <div class="pill" data-c="on-c" onclick="solo(this,'textStylePills')">Swiss Helvetica</div>
+          <div class="pill" data-c="on-c" onclick="solo(this,'textStylePills')">Brutalist Sans</div>
+          <div class="pill" data-c="on-c" onclick="solo(this,'textStylePills')">Cyberpunk Glitch</div>
+          <div class="pill" data-c="on-c" onclick="solo(this,'textStylePills')">Barcode / Matrix</div>
+        </div>
+      </div>
+      <div class="fcat" id="fcat-metal" style="display:none">
+        <div class="pills" id="textStylePills">
+          <div class="pill" data-c="on-p" onclick="solo(this,'textStylePills')">Death Metal Logo Style</div>
+          <div class="pill" data-c="on-p" onclick="solo(this,'textStylePills')">Thrash Metal Aggressive</div>
+          <div class="pill" data-c="on-p" onclick="solo(this,'textStylePills')">Black Metal Atmospheric</div>
+          <div class="pill" data-c="on-p" onclick="solo(this,'textStylePills')">Classic Rock Bold Serif</div>
+          <div class="pill" data-c="on-p" onclick="solo(this,'textStylePills')">Hair Metal 80s Chrome</div>
+          <div class="pill" data-c="on-p" onclick="solo(this,'textStylePills')">Punk Ransom Note</div>
+          <div class="pill" data-c="on-p" onclick="solo(this,'textStylePills')">Grunge Distressed</div>
+          <div class="pill" data-c="on-p" onclick="solo(this,'textStylePills')">Prog Rock Fantasy Font</div>
+          <div class="pill" data-c="on-p" onclick="solo(this,'textStylePills')">WWF Attitude Era Font</div>
+          <div class="pill" data-c="on-p" onclick="solo(this,'textStylePills')">WWE Championship Gold</div>
+        </div>
+      </div>
+      <div class="fcat" id="fcat-decorative" style="display:none">
+        <div class="pills" id="textStylePills">
+          <div class="pill" data-c="on-y" onclick="solo(this,'textStylePills')">Ornate Victorian</div>
+          <div class="pill" data-c="on-y" onclick="solo(this,'textStylePills')">Filigree &amp; Flourish</div>
+          <div class="pill" data-c="on-y" onclick="solo(this,'textStylePills')">Celtic Knotwork</div>
+          <div class="pill" data-c="on-y" onclick="solo(this,'textStylePills')">Stained Glass</div>
+          <div class="pill" data-c="on-y" onclick="solo(this,'textStylePills')">Embossed Gold Foil</div>
+          <div class="pill" data-c="on-y" onclick="solo(this,'textStylePills')">Sugar Skull Lettering</div>
+        </div>
+      </div>
+
+      <div class="sl">Text Effects</div>
+      <div class="pills" id="textFxPills">
+        <div class="pill" data-c="on"      onclick="tog(this)">Outlined / Stroke</div>
+        <div class="pill" data-c="on"      onclick="tog(this)">Drop Shadow</div>
+        <div class="pill" data-c="on-y"    onclick="tog(this)">3D Extruded</div>
+        <div class="pill" data-c="on-gold" onclick="tog(this)">Gold Metallic</div>
+        <div class="pill" data-c="on-c"    onclick="tog(this)">Chrome Mirror</div>
+        <div class="pill" data-c="on-c"    onclick="tog(this)">Glowing Neon</div>
+        <div class="pill" data-c="on-g"    onclick="tog(this)">Distressed / Eroded</div>
+        <div class="pill" data-c="on-g"    onclick="tog(this)">Halftone Fill</div>
+        <div class="pill" data-c="on-p"    onclick="tog(this)">Fire / Flame Fill</div>
+        <div class="pill" data-c="on-k"    onclick="tog(this)">Graffiti Drip</div>
+        <div class="pill" data-c="on-y"    onclick="tog(this)">Beveled / Embossed</div>
+        <div class="pill" data-c="on-c"    onclick="tog(this)">Woodgrain Texture</div>
+        <div class="pill" data-c="on-p"    onclick="tog(this)">Lightning Strike</div>
+        <div class="pill" data-c="on-gold" onclick="tog(this)">Foil Stamp</div>
+      </div>
+
+      <div class="sl">Text Position</div>
+      <div class="pills" id="textPosPills">
+        <div class="pill" data-c="on"   onclick="solo(this,'textPosPills')">Above Subject</div>
+        <div class="pill" data-c="on"   onclick="solo(this,'textPosPills')">Below Subject</div>
+        <div class="pill" data-c="on-y" onclick="solo(this,'textPosPills')">Curved Arc — Top</div>
+        <div class="pill" data-c="on-y" onclick="solo(this,'textPosPills')">Curved Arc — Bottom</div>
+        <div class="pill" data-c="on-y" onclick="solo(this,'textPosPills')">Full Circle Wrap</div>
+        <div class="pill" data-c="on-c" onclick="solo(this,'textPosPills')">Banner / Ribbon — Top</div>
+        <div class="pill" data-c="on-c" onclick="solo(this,'textPosPills')">Banner / Ribbon — Bottom</div>
+        <div class="pill" data-c="on-c" onclick="solo(this,'textPosPills')">Scroll / Pennant</div>
+        <div class="pill" data-c="on-g" onclick="solo(this,'textPosPills')">Behind Subject</div>
+        <div class="pill" data-c="on-g" onclick="solo(this,'textPosPills')">Full Width Bottom Strip</div>
+        <div class="pill" data-c="on-g" onclick="solo(this,'textPosPills')">Full Width Top Strip</div>
+        <div class="pill" data-c="on-p" onclick="solo(this,'textPosPills')">Diagonal / Angled</div>
+        <div class="pill" data-c="on-p" onclick="solo(this,'textPosPills')">Stacked Centered</div>
+        <div class="pill" data-c="on-k" onclick="solo(this,'textPosPills')">Integrated into Design</div>
+        <div class="pill" data-c="on"   onclick="solo(this,'textPosPills')">Chest Print — Center</div>
+        <div class="pill" data-c="on"   onclick="solo(this,'textPosPills')">Chest Print — Left</div>
+        <div class="pill" data-c="on-y" onclick="solo(this,'textPosPills')">Back Print — Top</div>
+        <div class="pill" data-c="on-y" onclick="solo(this,'textPosPills')">Back Print — Full Back</div>
+        <div class="pill" data-c="on-c" onclick="solo(this,'textPosPills')">Sleeve Print</div>
+        <div class="pill" data-c="on-g" onclick="solo(this,'textPosPills')">Bottom Right Label</div>
+        <div class="pill" data-c="on-p" onclick="solo(this,'textPosPills')">Bottom Left Label</div>
+        <div class="pill" data-c="on-k" onclick="solo(this,'textPosPills')">Neck Label Area</div>
+      </div>
+
+      <div class="sl">Per-Line Notes</div>
+      <input class="field" type="text" id="lineStyleNotes" placeholder="e.g. Line 1 large gold bold, Line 2 small white script, Line 3 tiny italic..."/>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 9. PURPOSE + MERCH ══ -->
+<div class="acc" id="acc-merch">
+  <div class="acc-head" onclick="toggleAcc('acc-merch')">
+    <div class="acc-title"><span class="acc-dot"></span>Purpose &amp; Merch</div>
+    <span class="acc-arrow">▼</span>
+  </div>
+  <div class="acc-body">
+    <div class="sl">Output Purpose</div>
+    <div class="pills" id="purposePills">
+      <div class="pill on" data-c="on"   onclick="solo(this,'purposePills')">Digital Only</div>
+      <div class="pill"    data-c="on-g" onclick="solo(this,'purposePills')">Vinyl Cut</div>
+      <div class="pill"    data-c="on-c" onclick="solo(this,'purposePills')">Screen Print</div>
+      <div class="pill"    data-c="on-y" onclick="solo(this,'purposePills')">DTF Print</div>
+      <div class="pill"    data-c="on-p" onclick="solo(this,'purposePills')">Embroidery</div>
+      <div class="pill"    data-c="on-k" onclick="solo(this,'purposePills')">Sublimation</div>
+      <div class="pill"    data-c="on"   onclick="solo(this,'purposePills')">Sticker</div>
+      <div class="pill"    data-c="on-g" onclick="solo(this,'purposePills')">Poster Print</div>
+    </div>
+    <div class="sl">Merchandise Type</div>
+    <div class="pills" id="merchPills">
+      <div class="pill" data-c="on"   onclick="tog(this)">T-Shirt</div>
+      <div class="pill" data-c="on"   onclick="tog(this)">Hoodie</div>
+      <div class="pill" data-c="on"   onclick="tog(this)">Tank Top</div>
+      <div class="pill" data-c="on-c" onclick="tog(this)">Hat / Cap</div>
+      <div class="pill" data-c="on-c" onclick="tog(this)">Tote Bag</div>
+      <div class="pill" data-c="on-y" onclick="tog(this)">Phone Case</div>
+      <div class="pill" data-c="on-y" onclick="tog(this)">Mug</div>
+      <div class="pill" data-c="on-g" onclick="tog(this)">Sticker Sheet</div>
+      <div class="pill" data-c="on-g" onclick="tog(this)">Patch</div>
+      <div class="pill" data-c="on-p" onclick="tog(this)">Poster</div>
+      <div class="pill" data-c="on-k" onclick="tog(this)">Enamel Pin</div>
+      <div class="pill" data-c="on"   onclick="tog(this)">Vinyl Record Sleeve</div>
+      <div class="pill" data-c="on-y" onclick="tog(this)">Album Insert / Booklet</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 10. TECHNICAL ══ -->
+<div class="acc" id="acc-tech">
+  <div class="acc-head" onclick="toggleAcc('acc-tech')">
+    <div class="acc-title"><span class="acc-dot"></span>Technical Options</div>
+    <span class="acc-arrow">▼</span>
+  </div>
+  <div class="acc-body">
+    <div class="sl">Aspect Ratio</div>
+    <div class="pills" id="ratioPills" style="margin-bottom:14px">
+      <div class="pill on" data-c="on"   onclick="solo(this,'ratioPills')">1:1 Square</div>
+      <div class="pill"    data-c="on"   onclick="solo(this,'ratioPills')">4:5 Portrait</div>
+      <div class="pill"    data-c="on"   onclick="solo(this,'ratioPills')">9:16 Tall</div>
+      <div class="pill"    data-c="on-y" onclick="solo(this,'ratioPills')">3:4</div>
+      <div class="pill"    data-c="on-c" onclick="solo(this,'ratioPills')">16:9 Wide</div>
+      <div class="pill"    data-c="on-c" onclick="solo(this,'ratioPills')">2:1 Banner</div>
+    </div>
+    <div class="sl">Quality</div>
+    <div class="pills" id="qualPills" style="margin-bottom:14px">
+      <div class="pill"      data-c="on"   onclick="solo(this,'qualPills')">Sketch / Rough</div>
+      <div class="pill"      data-c="on-y" onclick="solo(this,'qualPills')">Clean Lines</div>
+      <div class="pill"      data-c="on-c" onclick="solo(this,'qualPills')">Polished</div>
+      <div class="pill on-g" data-c="on-g" onclick="solo(this,'qualPills')">High Detail</div>
+      <div class="pill"      data-c="on-p" onclick="solo(this,'qualPills')">Print Ready</div>
+    </div>
+    <div class="sl">Special Flags</div>
+    <label class="tog"><input type="checkbox" id="noBackground"/> Transparent / white background</label>
+    <label class="tog"><input type="checkbox" id="isolatedChar"/> Isolated subject only</label>
+    <label class="tog"><input type="checkbox" id="vectorFriendly"/> Vector-friendly flat fill</label>
+    <label class="tog"><input type="checkbox" id="printSafe"/> CMYK print-safe colors</label>
+    <label class="tog"><input type="checkbox" id="vinylReady"/> Vinyl-cut ready (bold outlines)</label>
+    <label class="tog"><input type="checkbox" id="embroidery"/> Embroidery-simplified</label>
+    <label class="tog"><input type="checkbox" id="noGradients"/> No gradients (flat colors only)</label>
+    <label class="tog"><input type="checkbox" id="logoSafe"/> Logo-safe scalable artwork</label>
+    <label class="tog"><input type="checkbox" id="spotifyReady"/> Spotify-ready 3000x3000px quality</label>
+  </div>
+</div>
+
+<!-- OUTPUT -->
+<div id="outputSection" style="display:none">
+  <div class="out-wrap">
+    <div class="out-hdr">
+      <div class="out-title">⚡ Prompts</div>
+      <div class="btn-row">
+        <button class="btn-sm" onclick="clearOut()">Clear</button>
+        <button class="btn-sm green" onclick="saveToHistory()">💾 Save</button>
+        <button class="btn-sm" id="copyAllBtn" onclick="copyAll()">Copy All</button>
+      </div>
+    </div>
+    <div id="outputArea"></div>
+  </div>
+  <div class="notice" id="merchNote" style="display:none"></div>
+</div>
+
+<!-- HISTORY -->
+<div class="acc" id="acc-history">
+  <div class="acc-head" onclick="toggleAcc('acc-history')">
+    <div class="acc-title"><span class="acc-dot"></span>Prompt History</div>
+    <div class="acc-right"><span class="acc-meta" id="historyCount">0 saved</span><span class="acc-arrow">▼</span></div>
+  </div>
+  <div class="acc-body">
+    <div id="historyList"><div style="color:var(--dim);font-family:'Barlow Condensed',sans-serif;font-size:.82rem;letter-spacing:1px">No saved prompts yet. Generate and hit 💾 Save.</div></div>
+    <button class="btn-sm" style="margin-top:8px" onclick="clearHistory()">Clear All History</button>
+  </div>
+</div>
+
+<div class="notice">⚠️ Style prompts reference visual aesthetics. For logos, Ideogram and Midjourney give best results. Generated images need vector tracing in Illustrator before production use.</div>
+
+</div><!-- /app -->
+
+<div class="sticky-bottom">
+  <button class="gen-btn" onclick="generate()">⚡ GENERATE PROMPTS</button>
+</div>
+
+<script>
+// ══ STATE ══
+const state={
+  subjectType:'character',
+  contextMode:'tshirt',
+  brandMode:'none',
+  vaultOn:true,
+  img:null,
+  chars:{gk:false,djsl:false,sean:false,laurinda:false,mike:false},
+  customChars:[],
+  history:[],
+  lineCount:2
+};
+
+// ══ INIT ══
+window.addEventListener('load',()=>{
+  drawSafeZone();
+  loadHistory();
+  loadCharDescs();
+});
+
+// ══ UPLOAD ══
+setupUpload('uploadZone','fileInput','upPreview','upPh','upName','img');
+function setupUpload(zoneId,inputId,previewId,phId,nameId,key){
+  const uz=document.getElementById(zoneId);
+  const fi=document.getElementById(inputId);
+  if(!uz||!fi)return;
+  fi.addEventListener('change',e=>doFile(e.target.files[0],previewId,phId,nameId,key));
+  uz.addEventListener('dragover',e=>{e.preventDefault();uz.classList.add('drag')});
+  uz.addEventListener('dragleave',()=>uz.classList.remove('drag'));
+  uz.addEventListener('drop',e=>{e.preventDefault();uz.classList.remove('drag');if(e.dataTransfer.files[0])doFile(e.dataTransfer.files[0],previewId,phId,nameId,key)});
+}
+function doFile(f,previewId,phId,nameId,key){
+  if(!f||!f.type.startsWith('image/'))return;
+  state[key]=f;
+  const r=new FileReader();
+  r.onload=ev=>{
+    const p=document.getElementById(previewId);
+    if(p){p.src=ev.target.result;p.classList.add('show');}
+    const ph=document.getElementById(phId);
+    if(ph)ph.style.display='none';
+    const nm=document.getElementById(nameId);
+    if(nm)nm.textContent='✓ '+f.name;
+  };
+  r.readAsDataURL(f);
+}
+
+// ══ VAULT ══
+function toggleVault(){
+  state.vaultOn=!state.vaultOn;
+  const dot=document.getElementById('vaultDot');
+  const txt=document.getElementById('vaultText');
+  const status=document.getElementById('vaultStatus');
+  const btn=document.getElementById('vaultToggleBtn');
+  if(state.vaultOn){
+    dot.classList.remove('off');status.classList.remove('off');
+    txt.textContent='🛡️ NEGATIVE VAULT — ACTIVE';
+    btn.classList.add('active');
+  } else {
+    dot.classList.add('off');status.classList.add('off');
+    txt.textContent='⚠️ VAULT DISABLED';
+    btn.classList.remove('active');
+  }
+}
+
+// ══ BRAND MODE ══
+function setBrand(mode,el){
+  state.brandMode=mode;
+  document.querySelectorAll('.brand-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  const info=document.getElementById('brandInfo');
+  if(mode==='gk'){
+    info.style.display='block';
+    info.className='gold-box';
+    info.innerHTML='👑 <strong>Goat King Mode</strong> — Injecting: gold and black luxury aesthetic, regal majestic power, crown and royal imagery. Negative: NO pentagram, NO demonic, NO Baphomet, NO satanic goat, NO occult symbols, NO red glowing eyes.';
+  } else if(mode==='dx'){
+    info.style.display='block';
+    info.className='info-box';
+    info.innerHTML='🔊 <strong>DynamiX SounD Mode</strong> — Injecting: high-energy electronic music visuals, frequency waveform patterns, technical audio equipment aesthetic, sonic vibration and bass energy, speaker cone and soundwave imagery.';
+  } else if(mode==='dj'){
+    info.style.display='block';
+    info.className='info-box';
+    info.style.borderColor='var(--purple)';
+    info.innerHTML='🎧 <strong>DJ Shawn Lopes Mode</strong> — Injecting: DJ Shawn Lopes artist branding, Caribbean electronic fusion music culture, professional DJ performer aesthetic, Soca and EDM crossover energy.';
+  } else {
+    info.style.display='none';
+  }
+}
+
+// ══ CONTEXT MODE ══
+function setCtx(mode,el){
+  state.contextMode=mode;
+  document.querySelectorAll('.ctx-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('[id^="ctx-panel-"]').forEach(p=>p.classList.remove('show'));
+  const panel=document.getElementById('ctx-panel-'+mode);
+  if(panel)panel.classList.add('show');
+  const labels={tshirt:'T-Shirt / Merch',album:'Album / Single Art',lifestyle:'Lifestyle Mockup',logo:'Logo / Brand',poster:'Poster / Promo',general:'General Art'};
+  document.getElementById('ctxSummary').textContent=labels[mode]||mode;
+}
+
+// ══ SUBJECT TYPE ══
+function setSubject(type,el){
+  state.subjectType=type;
+  document.querySelectorAll('.subj-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.cond-panel').forEach(p=>p.classList.remove('show'));
+  document.getElementById('panel-'+type).classList.add('show');
+  const labels={character:'Character',logo:'Logo / Mark',object:'Object / Mascot'};
+  document.getElementById('subjectSummary').textContent=labels[type]||type;
+}
+
+// ══ ACCORDION ══
+function toggleAcc(id){document.getElementById(id).classList.toggle('open')}
+
+// ══ STYLE CATS ══
+function showSCat(tab,cat){
+  document.querySelectorAll('#styleCatStrip .cp').forEach(t=>t.classList.remove('active'));
+  tab.classList.add('active');
+  document.querySelectorAll('.scat').forEach(c=>c.classList.remove('show'));
+  document.getElementById('scat-'+cat).classList.add('show');
+}
+function showFCat(tab,cat){
+  document.querySelectorAll('#fontCatStrip .cp').forEach(t=>t.classList.remove('active'));
+  tab.classList.add('active');
+  document.querySelectorAll('.fcat').forEach(c=>c.style.display='none');
+  document.getElementById('fcat-'+cat).style.display='block';
+}
+function stylePick(el){
+  document.querySelectorAll('.scat .pill').forEach(p=>p.className='pill');
+  el.classList.add(el.dataset.c||'on');
+  document.getElementById('styleSummary').textContent=el.textContent.trim();
+}
+
+// ══ PILL HELPERS ══
+const ALL_C=['on','on-y','on-c','on-g','on-p','on-k','on-gold'];
+function tog(el){
+  const c=el.dataset.c||'on';
+  if(ALL_C.some(x=>el.classList.contains(x))){ALL_C.forEach(x=>el.classList.remove(x));}
+  else el.classList.add(c);
+}
+function solo(el,gid){
+  const g=document.getElementById(gid);
+  if(g)g.querySelectorAll('.pill').forEach(p=>p.className='pill');
+  el.classList.add(el.dataset.c||'on');
+}
+function toggleAI(el){el.classList.toggle('sel')}
+function toggleTxt(){document.getElementById('txtSection').style.display=document.getElementById('textEnabled').checked?'block':'none';}
+
+// ══ CHARACTER LIBRARY ══
+const CHAR_DESCS={
+  gk:'Powerful regal goat figure wearing a gold and black crown, draped in luxury gold and black robes, fierce intelligent eyes, commanding royal presence, NOT demonic or occult, majestic and authoritative',
+  djsl:'DJ Shawn Lopes, confident and stylish DJ persona, professional DJ equipment, high-energy performer presence, Caribbean and electronic music culture fusion',
+  sean:'',laurinda:'',mike:''
+};
+
+function loadCharDescs(){
+  try{
+    const saved=localStorage.getItem('pf_chardescs');
+    if(saved){const d=JSON.parse(saved);Object.assign(CHAR_DESCS,d);}
+    ['sean','laurinda','mike'].forEach(n=>{
+      const el=document.getElementById('desc-'+n);
+      if(el&&CHAR_DESCS[n])el.textContent=CHAR_DESCS[n];
+    });
+    const cc=localStorage.getItem('pf_customchars');
+    if(cc){state.customChars=JSON.parse(cc);renderCustomChars();}
+  }catch(e){}
+}
+function saveCharDescs(){
+  try{localStorage.setItem('pf_chardescs',JSON.stringify(CHAR_DESCS));}catch(e){}
+}
+
+function toggleChar(name){
+  state.chars[name]=!state.chars[name];
+  const card=document.getElementById('char-'+name);
+  const check=document.getElementById('check-'+name);
+  if(state.chars[name]){card.classList.add('active');check.textContent='✓';}
+  else{card.classList.remove('active');check.textContent='';}
+}
+function editChar(name){
+  const current=CHAR_DESCS[name]||'';
+  const val=prompt('Enter physical description for '+name.charAt(0).toUpperCase()+name.slice(1)+':\n\n(This will be injected into every prompt when this character is selected)',current);
+  if(val!==null){
+    CHAR_DESCS[name]=val;
+    const el=document.getElementById('desc-'+name);
+    if(el)el.textContent=val||'No description set';
+    saveCharDescs();
+  }
+}
+function addCustomChar(){
+  const name=document.getElementById('customCharName').value.trim();
+  const desc=document.getElementById('customCharDesc').value.trim();
+  if(!name||!desc){alert('Enter both name and description.');return;}
+  state.customChars.push({name,desc,active:false});
+  document.getElementById('customCharName').value='';
+  document.getElementById('customCharDesc').value='';
+  try{localStorage.setItem('pf_customchars',JSON.stringify(state.customChars));}catch(e){}
+  renderCustomChars();
+}
+function renderCustomChars(){
+  const el=document.getElementById('customCharsList');
+  el.innerHTML='';
+  state.customChars.forEach((c,i)=>{
+    const div=document.createElement('div');
+    div.className='char-card'+(c.active?' active':'');
+    div.innerHTML=`<div class="char-check" id="ccheck-${i}">${c.active?'✓':''}</div><div><div class="char-name">👤 ${c.name.toUpperCase()}</div><div class="char-desc">${c.desc}</div></div>`;
+    div.onclick=()=>{
+      c.active=!c.active;
+      div.classList.toggle('active');
+      div.querySelector('.char-check').textContent=c.active?'✓':'';
+    };
+    el.appendChild(div);
+  });
+}
+
+// ══ TEXT LINES ══
+function addTextLine(){
+  if(state.lineCount>=6)return;
+  state.lineCount++;
+  const div=document.createElement('div');
+  div.className='text-line';
+  div.innerHTML=`<span class="line-label">L${state.lineCount}</span><input class="field" type="text" placeholder="Additional text line..."/>`;
+  document.getElementById('textLines').appendChild(div);
+}
+function getTextLines(){
+  return[...document.querySelectorAll('#textLines .text-line input')].map(i=>i.value.trim()).filter(v=>v);
+}
+
+// ══ SAFE ZONE CANVAS ══
+function drawSafeZone(){
+  const canvas=document.getElementById('safeZoneCanvas');
+  if(!canvas)return;
+  const ctx=canvas.getContext('2d');
+  const w=canvas.width,h=canvas.height;
+  ctx.fillStyle='#222';ctx.fillRect(0,0,w,h);
+  // safe zone
+  ctx.fillStyle='rgba(255,255,255,0.05)';ctx.fillRect(w*.1,h*.1,w*.8,h*.65);
+  ctx.strokeStyle='rgba(255,255,255,0.2)';ctx.lineWidth=1;ctx.strokeRect(w*.1,h*.1,w*.8,h*.65);
+  ctx.fillStyle='rgba(255,255,255,0.15)';
+  ctx.font='bold 11px Barlow Condensed, sans-serif';ctx.textAlign='center';
+  ctx.fillText('SAFE ZONE — Main Artwork Here',w/2,h*.35);
+  // play button area
+  ctx.fillStyle='rgba(255,50,50,0.35)';ctx.fillRect(w*.02,h*.75,w*.15,h*.2);
+  ctx.fillStyle='rgba(255,80,80,0.9)';ctx.font='9px Barlow Condensed, sans-serif';
+  ctx.textAlign='center';ctx.fillText('▶ PLAY',w*.095,h*.87);
+  // title area
+  ctx.fillStyle='rgba(255,200,0,0.25)';ctx.fillRect(w*.18,h*.75,w*.8,h*.22);
+  ctx.fillStyle='rgba(255,200,0,0.9)';
+  ctx.fillText('Track Title / Artist Name',w*.58,h*.84);
+  ctx.fillText('(Spotify overlays this area)',w*.58,h*.93);
+  // labels
+  ctx.fillStyle='rgba(100,200,100,0.6)';ctx.font='bold 10px Barlow Condensed, sans-serif';
+  ctx.textAlign='left';ctx.fillText('Spotify Album Art Safe Zone — 1:1 Square',8,12);
+}
+
+// ══ GETTERS ══
+function getOne(gid){
+  const g=document.getElementById(gid);if(!g)return null;
+  const a=g.querySelector('.pill.on,.pill.on-y,.pill.on-c,.pill.on-g,.pill.on-p,.pill.on-k,.pill.on-gold');
+  return a?a.textContent.trim():null;
+}
+function getMany(gid){
+  const g=document.getElementById(gid);if(!g)return[];
+  return[...g.querySelectorAll('.pill.on,.pill.on-y,.pill.on-c,.pill.on-g,.pill.on-p,.pill.on-k,.pill.on-gold')].map(p=>p.textContent.trim());
+}
+function getStyle(){
+  const a=document.querySelector('.scat .pill.on,.scat .pill.on-y,.scat .pill.on-c,.scat .pill.on-g,.scat .pill.on-p,.scat .pill.on-k,.scat .pill.on-gold');
+  return a?a.textContent.trim():null;
+}
+function getFontStyle(){
+  const a=document.querySelector('.fcat .pill.on,.fcat .pill.on-y,.fcat .pill.on-c,.fcat .pill.on-g,.fcat .pill.on-p,.fcat .pill.on-k');
+  return a?a.textContent.trim():null;
+}
+function getAIs(){return[...document.querySelectorAll('.ai-btn.sel')].map(b=>b.dataset.ai)}
+
+// ══ NEGATIVE VAULT ══
+const VAULT_KEYWORDS='pentagram, demonic, satanic, occult symbols, Baphomet, satanic goat, red glowing eyes, distorted anatomy, messy lines, blurry text, low resolution, watermark, ugly, duplicate, extra limbs, deformed hands, gore, disturbing religious imagery';
+const GK_EXTRA='Baphomet, satanic goat, goat with pentagram, devil horns on goat, evil goat, demonic crown, hellish imagery';
+
+// ══ CONTEXT SUFFIXES ══
+const CTX_SUFFIX={
+  tshirt:', flat vector illustration, white background, suitable for t-shirt print, bold graphic design, no background',
+  album:', square format album artwork, Spotify cover art quality, 1:1 aspect ratio, high impact visual',
+  lifestyle:', lifestyle photography aesthetic, product in use, aspirational setting, editorial quality',
+  logo:', clean scalable logo design, vector-friendly, works at small sizes, professional brand mark',
+  poster:', poster layout, large format print quality, dramatic composition, high resolution artwork',
+  general:''
+};
+
+// ══ STYLE NOTES ══
+const SN={
+  'Looney Tunes':'exaggerated Looney Tunes animation style, thick black outlines, rubber hose limbs, slapstick cartoon proportions, Warner Bros animation aesthetic',
+  'Animaniacs':'Animaniacs cartoon style, expressive eyes, Warner Bros 90s animation, bold outlines, comedic cartoon proportions',
+  'Tom & Jerry':'Tom and Jerry MGM cartoon style, 1940s-1950s flat cel animation, bold outlines, slapstick expressions',
+  'Scooby-Doo':'Scooby-Doo Hanna-Barbera cartoon style, 1970s Saturday morning cartoon, simple flat colors, bold outlines',
+  'Flintstones':'Flintstones Hanna-Barbera style, stone-age cartoon, flat cel animation, bold outlines',
+  'Jetsons':'Jetsons Hanna-Barbera futuristic cartoon, 1960s space-age aesthetic, flat cel animation',
+  'Hanna-Barbera':'classic Hanna-Barbera cartoon style, 1960s-70s limited animation, flat colors, bold outlines',
+  'Popeye':'classic Popeye cartoon style, Max Fleischer animation, rubber hose animation, 1930s cel cartoon',
+  'Pink Panther':'Pink Panther cartoon style, stylized minimalist animation, cool mid-century aesthetic',
+  'Rocky & Bullwinkle':'Rocky and Bullwinkle Jay Ward cartoon style, limited animation, satirical 1960s TV cartoon',
+  'The Simpsons':'The Simpsons animation style, yellow skin, simple oval eyes, Matt Groening character design, bold outlines, flat colors',
+  'Family Guy':'Family Guy animation style, Seth MacFarlane character design, simple rounded cartoon, bold outlines',
+  'Futurama':'Futurama animation style, sci-fi cartoon aesthetic, clean bold lines, retro-futurist cartoon',
+  "Bob's Burgers":"Bob's Burgers animation style, indie cartoon, simple rounded characters, warm flat colors",
+  'King of the Hill':'King of the Hill animation style, Mike Judge flat cartoon, realistic proportions, muted colors',
+  'Archer':'Archer animation style, high-contrast cel shading, clean lines, stylized retro-modern illustration',
+  'South Park':'South Park animation style, crude paper cutout cartoon, flat geometric shapes',
+  'Rick and Morty':'Rick and Morty animation style, Justin Roiland character design, sci-fi cartoon, fluid loose line work',
+  'Bojack Horseman':'Bojack Horseman animation style, anthropomorphic cartoon, flat illustration, muted palette',
+  'Adventure Time':'Adventure Time animation style, Pendleton Ward character design, post-apocalyptic fantasy cartoon, rubber limbs',
+  'Gravity Falls':'Gravity Falls animation style, Alex Hirsch mystery cartoon, solid flat colors',
+  'Steven Universe':'Steven Universe animation style, Rebecca Sugar character design, pastel color palette, rounded soft shapes',
+  'Samurai Jack':'Samurai Jack animation style, Genndy Tartakovsky minimalist design, strong negative space',
+  "Dexter's Lab":"Dexter's Laboratory animation style, Genndy Tartakovsky design, strong geometric shapes, bold outlines",
+  'Powerpuff Girls':'Powerpuff Girls animation style, Craig McCracken design, simple round shapes, strong contrasting colors',
+  'Courage the Dog':'Courage the Cowardly Dog animation style, surreal cartoon, horror comedy, expressive distorted faces',
+  'Invader Zim':'Invader Zim animation style, Jhonen Vasquez character design, angular goth cartoon',
+  'Ren & Stimpy':'Ren and Stimpy animation style, John Kricfalusi extreme animation, hyper-detailed gross-out cartoon',
+  'Rugrats':'Rugrats animation style, Klasky Csupo character design, wobbly line work, 1990s Nickelodeon',
+  'Regular Show':'Regular Show animation style, JG Quintel character design, slacker cartoon, retro-modern',
+  'Dragon Ball Z':'Dragon Ball Z anime style, Akira Toriyama character design, hyper muscular forms, power aura effects, 1990s shonen anime',
+  'Naruto':'Naruto anime style, Masashi Kishimoto character design, ninja action, bold linework, shonen battle aesthetic',
+  'One Piece':'One Piece anime style, Eiichiro Oda character design, wildly exaggerated proportions, pirate adventure aesthetic',
+  'Attack on Titan':'Attack on Titan anime style, dark military aesthetic, detailed realistic anime, gritty line work',
+  'Studio Ghibli':'Studio Ghibli anime style, Hayao Miyazaki hand-painted aesthetic, soft watercolor, expressive character faces',
+  'Akira':'Akira anime style, Katsuhiro Otomo cyberpunk aesthetic, hyper-detailed cel animation, dystopian Neo-Tokyo',
+  'Demon Slayer':'Demon Slayer anime style, Ufotable animation studio, painterly backgrounds, dramatic watercolor breath effects',
+  "JoJo's Bizarre":"JoJo's Bizarre Adventure anime style, Hirohiko Araki character design, fashion model poses, muscular stylized proportions",
+  'Evangelion':'Neon Genesis Evangelion anime style, Gainax mecha aesthetic, psychological horror undertones',
+  'Cowboy Bebop':'Cowboy Bebop anime style, Shinichiro Watanabe jazz noir aesthetic, moody cinematic anime',
+  'Bleach':'Bleach anime style, Tite Kubo character design, Soul Reaper aesthetic, dramatic slash effects',
+  'Sailor Moon':'Sailor Moon magical girl anime style, sparkle transformation, pastel color palette',
+  'Classic Disney':'classic Walt Disney animation style, golden age cartoon, 12 principles of animation, round expressive character design',
+  'Pixar 3D':'Pixar 3D animation style, photorealistic CGI with cartoon aesthetic, subsurface scattering skin, hyper expressive characters',
+  'Disney Renaissance':'Disney Renaissance animation style, 1990s Disney film aesthetic, painterly backgrounds, detailed characters',
+  'Disney Villain Style':'Disney villain character design style, angular menacing features, dark theatrical aesthetic, gothic costume design',
+  'Obey / Shepard Fairey':'Shepard Fairey Obey Giant street art style, bold 2-color stencil, red and black propaganda aesthetic, strong graphic posterization, bold outlines, halftone dots',
+  'Soviet Propaganda':'Soviet constructivist propaganda poster style, bold geometric composition, red and gold palette, heroic worker aesthetic, Bolshevik revolution art',
+  'WW2 Propaganda':'World War II propaganda poster style, bold graphic illustration, limited color palette, patriotic composition, 1940s poster art',
+  'Maoist Propaganda':'Chinese Cultural Revolution propaganda art style, Socialist Realist painting, red revolutionary banner aesthetic',
+  'Cuban Propaganda':'Cuban revolutionary propaganda poster style, bold screenprint aesthetic, socialist graphic art, OSPAAAL inspired',
+  'Constructivist':'Russian Constructivist art style, El Lissitzky and Rodchenko inspired, bold diagonal geometry, red black white palette',
+  'Banksy Stencil':'Banksy street art stencil style, spray paint on concrete, subversive black stencil with single color accent',
+  'Graffiti Wild Style':'graffiti wild style lettering art, spray paint aerosol aesthetic, interlocking 3D letters, New York subway art style',
+  'Street Art Mural':'urban street art mural style, large scale paste-up aesthetic, bold graphic illustration',
+  'Screen Print Poster':'screenprint poster style, visible halftone dots, limited ink colors, registration overlap, gig poster aesthetic',
+  'Punk Zine Collage':'punk zine cut-and-paste collage style, photocopied xerox aesthetic, ransom note typography, DIY anarchist graphic design',
+  'Concert Poster':'vintage concert poster art, psychedelic 1960s-70s rock poster, ornate hand lettering, Fillmore Auditorium style',
+  '3-Color Risograph':'risograph print style, 3 ink colors with halftone texture, slight color misregistration, indie press publication aesthetic',
+  'Underground Comix':'underground comix style, Robert Crumb inspired, detailed crosshatch line work, 1960s-70s counterculture comic aesthetic',
+  'Lowbrow Pop Surrealism':'lowbrow pop surrealism art style, Mark Ryden meets Robert Williams, candy-colored surreal imagery, hot rod custom culture',
+  'Skate Deck Art':'skateboard deck graphic art style, street culture illustration, bold graphic design, underground skate aesthetic',
+  'Hot Rod Kustom Art':'hot rod custom car culture art style, 1950s-60s monster kustom, dragster flames aesthetic',
+  'Big Daddy Ed Roth':'Ed Roth rat fink style illustration, 1960s hot rod monster cartoon, rubber mutant character, kustom kulture art',
+  'Black Light Poster':'black light psychedelic poster art style, neon fluorescent colors on black, UV reactive aesthetic, 1960s-70s head shop art',
+  'NYC Subway Graffiti':'NYC subway graffiti style, 1970s-80s aerosol art, train car letter style, underground transit art culture',
+  'Marvel Silver Age':'Marvel Comics Silver Age style, Jack Kirby era, bold Ben-Day dots, heroic action composition, 1960s four-color printing',
+  'DC Bronze Age':'DC Comics Bronze Age style, 1970s superhero art, Neal Adams influenced, detailed figure drawing, dramatic shadows',
+  'Jack Kirby':'Jack Kirby Marvel Comics style, Kirby Krackle energy, bold geometric forms, cosmic Fourth World aesthetic',
+  'Jim Lee Style':'Jim Lee Image Comics style, 1990s X-Men era, highly detailed crosshatch shading, extreme muscle anatomy',
+  'Todd McFarlane':'Todd McFarlane Spawn style, intricate cape detail, organic webbing texture, dark gothic superhero aesthetic',
+  'Frank Miller Sin City':'Frank Miller Sin City graphic novel style, stark high-contrast black and white, film noir atmosphere',
+  'Mike Mignola':'Mike Mignola Hellboy style, bold shadow shapes, limited color palette, occult horror atmosphere',
+  'Alex Ross Painted':'Alex Ross painted comics style, photorealistic oil painting of superheroes, majestic painted illustration',
+  'Manga B&W Screentone':'manga black and white with screentone shading, N-Screen dot patterns, Japanese comic aesthetic',
+  'Shonen Jump Style':'Weekly Shonen Jump manga style, battle-action oriented, speed lines, dramatic power-up expressions',
+  'EC Horror Comics':'EC Comics horror style, 1950s Tales from the Crypt aesthetic, macabre illustration, grotesque exaggeration',
+  'Golden Age Comics':'Golden Age comic book style, 1930s-40s superhero aesthetic, bright flat colors, bold simple lines',
+  'Roy Lichtenstein Pop Art':'Roy Lichtenstein pop art style, comic book panel enlarged, bold Ben-Day halftone dots, thick black outlines',
+  '1920s Art Deco':'1920s Art Deco poster style, geometric symmetry, stepped forms, metallic gold and black, Jazz Age glamour',
+  '1940s Pin-Up':'1940s American pin-up art style, Gil Elvgren influenced, patriotic nostalgia, cheesecake glamour illustration',
+  '1940s Pulp Sci-Fi':'1940s pulp science fiction magazine cover, Amazing Stories aesthetic, ray guns and aliens, lurid color palette',
+  '1950s Americana':'1950s Americana illustration style, Norman Rockwell suburban optimism, Saturday Evening Post cover art',
+  '1950s Atomic Age':'1950s atomic age aesthetic, Googie architecture, space race optimism, futuristic boomerang shapes',
+  '1960s Psychedelic':'1960s psychedelic poster art, Wes Wilson and Victor Moscoso style, melting letterforms, LSD rainbow palette',
+  '1970s Blaxploitation':'1970s blaxploitation movie poster style, bold funky typography, afrofuturist color, cool street attitude',
+  '1980s Retro-Futurism':'1980s retro-futurism aesthetic, neon grid landscapes, airbrushed chrome, Miami Vice color palette',
+  'Vaporwave':'vaporwave aesthetic, pastel pink and cyan palette, glitchy Roman busts, Windows 95 nostalgia',
+  'Synthwave':'synthwave aesthetic, purple and pink neon, retro-futuristic cityscape, chrome grid perspective',
+  'Outrun':'outrun aesthetic, sunset horizon grid, palm trees silhouette, 80s racing game aesthetic',
+  'Soviet Realism':'Soviet Socialist Realism painting style, heroic worker composition, warm dramatic lighting',
+  'Vintage Travel Poster':'vintage travel poster illustration style, 1930s-50s lithograph print, simplified landscape, bold typography',
+  'Old West Wanted Poster':'Old West wanted poster style, letterpress typography, sepia toned, frontier justice aesthetic, woodcut illustration',
+  'Circus Sideshow Poster':'vintage circus sideshow poster style, barker typography, illustrated freakshow aesthetic',
+  'Tattoo Flash Sheet':'traditional tattoo flash art style, bold outlines, sailor jerry aesthetic, limited color fills',
+  'Pixel Art 8-bit':'pixel art 8-bit video game style, NES era graphics, chunky pixels, limited color palette',
+  'Ukiyo-e Woodblock':'Japanese ukiyo-e woodblock print style, Hokusai and Hiroshige inspired, flat graphic waves',
+  'Victorian Engraving':'Victorian era steel engraving illustration style, cross-hatch line work, encyclopedia Britannica aesthetic',
+  'Cel-Shaded 3D':'cel-shaded 3D CGI animation style, cartoon shading on 3D model, bold outlines, flat color fills',
+  'Hyperrealistic CGI':'hyperrealistic CGI render, photorealistic digital art, ray-traced lighting, ultra-detailed textures',
+  'Low Poly':'low polygon 3D art style, geometric faceted surfaces, minimalist 3D aesthetic',
+  'Neon Noir':'neon noir cyberpunk aesthetic, dark rainy streets, neon reflections, dramatic high contrast lighting',
+  'Cyberpunk':'cyberpunk aesthetic, dystopian future, neon signs, augmented reality, tech-noir atmosphere',
+  'Glitch Art':'glitch art digital aesthetic, pixel corruption, RGB color channel shift, digital distortion',
+  'Vector Flat':'vector flat design illustration style, no gradients, clean geometric shapes, bold flat colors',
+  'Minimalist Vector':'minimalist vector illustration, simple shapes, generous negative space, limited 2-3 color palette',
+  'Double Exposure':'double exposure photography effect, two images blended, silhouette filled with landscape',
+  'Duotone':'duotone color effect, two-color gradient overlay, high contrast graphic design',
+  'Holographic':'holographic iridescent aesthetic, rainbow prismatic sheen, foil-like surface, Y2K aesthetic',
+  'Brutalist Graphic':'brutalist graphic design, raw unpolished aesthetic, heavy typography, asymmetric layout',
+  'Bauhaus':'Bauhaus design aesthetic, primary colors, geometric shapes, functional form, 1920s avant-garde',
+  'Memphis Design':'Memphis design group aesthetic, 1980s postmodern, geometric squiggles and dots, clashing colors',
+  'Sticker Art':'sticker art illustration style, bold outlines, bright colors, designed for sticker printing',
+  'Chiaroscuro Digital':'chiaroscuro digital painting, extreme light and shadow contrast, old master inspired',
+  'Cyber-Heraldry':'cyber-heraldry digital art style, futuristic coat of arms, circuit board meets medieval crest, tech-heraldic fusion aesthetic',
+  'Azulejo Modern':'Azulejo modern art style, Portuguese blue tile pattern inspiration meets contemporary design, geometric floral motifs, blue and white palette with modern graphic sensibility',
+  'Oil Painting Classical':'classical oil painting style, old master techniques, rich impasto texture, dramatic lighting',
+  'Impressionism':'French Impressionism painting style, loose visible brushstrokes, light and color over form',
+  'Surrealism':'Surrealism art style, Salvador Dali influenced, dreamlike impossible imagery, hyper-detailed bizarre scenes',
+  'Pop Art':'Pop Art style, Andy Warhol influenced, bold primary colors, popular culture imagery, Ben-Day dots',
+  'Andy Warhol Screen Print':'Andy Warhol silkscreen print style, repeated motif, bold flat colors, celebrity portrait aesthetic',
+  'Keith Haring':'Keith Haring graffiti art style, bold black outlines, primary colors, dancing figures, subway art aesthetic',
+  'Basquiat Neo-Expressionism':'Jean-Michel Basquiat neo-expressionism style, raw graffiti marks, crown symbols, text integration, street art energy',
+  'Norman Rockwell':'Norman Rockwell illustration style, Saturday Evening Post cover, detailed realistic Americana',
+  'Frank Frazetta':'Frank Frazetta fantasy art style, heroic muscular figures, dramatic action, painterly epic composition',
+  'Mucha Art Nouveau':'Alphonse Mucha Art Nouveau style, flowing organic lines, floral borders, decorative poster aesthetic',
+  'Gustav Klimt':'Gustav Klimt painting style, gold leaf patterns, Byzantine mosaic influence, ornate decorative symbolism',
+  'Frida Kahlo Style':'Frida Kahlo painting style, self-portrait, Mexican folk art influence, surrealist symbolism, vibrant colors',
+  'Diego Rivera Mural':'Diego Rivera mural style, Mexican muralism, social realist figures, monumental public art composition',
+  'Watercolor Fine Art':'fine art watercolor painting, transparent washes, bleeding edges, loose gestural marks',
+  'Ink Wash / Sumi-e':'sumi-e Japanese ink wash painting style, spontaneous brush marks, minimal composition, Zen aesthetic',
+  'Woodcut Folk Art':'woodcut folk art print style, handcarved relief printing aesthetic, bold simple shapes, peasant art tradition',
+  'Photorealistic':'photorealistic digital art, indistinguishable from photograph, hyper-detailed rendering',
+  'Studio Portrait':'professional studio portrait photography, controlled lighting, clean background, commercial photography',
+  'Cinematic Film Still':'cinematic film still photography, movie production aesthetic, dramatic lighting, anamorphic lens flare',
+  'Black & White Photography':'high contrast black and white photography, silver gelatin print aesthetic, dramatic shadows',
+  'Film Grain / Analog':'analog film photography aesthetic, 35mm grain texture, slightly warm color cast, authentic film look',
+  'Action Photography':'sports action photography, motion blur, high shutter speed freeze, dynamic athletic composition',
+  'Bokeh Portrait':'shallow depth of field portrait, creamy bokeh background, subject isolation, 85mm lens aesthetic',
+  'Long Exposure':'long exposure photography, light trails, silky water, star trails, tripod nighttime photography',
+  'Tilt-Shift Miniature':'tilt-shift photography effect, miniature diorama look, selective focus plane, toy-like scale illusion',
+  'High Fantasy Illustration':'epic high fantasy book cover illustration style, detailed painterly, heroic character design',
+  'Dark Fantasy':'dark fantasy illustration style, grim shadowy atmosphere, Berserk aesthetic, detailed gritty realism',
+  'D&D Monster Manual':'Dungeons and Dragons Monster Manual illustration style, tabletop RPG art, fantasy creature design',
+  'Magic The Gathering Card':'Magic The Gathering card art style, fantasy trading card illustration, dramatic painterly composition',
+  'Boris Vallejo Fantasy':'Boris Vallejo fantasy art style, muscular hyperrealistic painted figures, airbrushed perfection',
+  'Heavy Metal Magazine':'Heavy Metal magazine illustration style, adult sci-fi fantasy art, European graphic novel aesthetic',
+  'Retro Sci-Fi Paperback':'retro science fiction paperback cover art, 1950s-60s pulp sci-fi, atomic age robots',
+  'Steampunk':'steampunk aesthetic, Victorian science fiction, brass gears and goggles, steam-powered technology',
+  'Cyberpunk 2077 Art':'Cyberpunk 2077 game concept art style, neon-soaked Night City aesthetic, chrome implants, corpo-punk fashion',
+  'Warhammer 40K':'Warhammer 40K grimdark aesthetic, space marine power armor, gothic science fantasy, brutal futuristic war',
+  'Video Game Concept Art':'video game concept art style, character design sheet, clean professional game industry illustration',
+  // MUSIC & GENRE
+  'Soca / Carnival':'Soca carnival music visual style, vibrant tropical colors, Carnival mas band energy, feathers and rhinestones, Caribbean festival exuberance, joyful high-energy composition',
+  'EDM / Electronic':'EDM electronic music visual aesthetic, laser light show, bass drop energy, festival crowd, waveform visualization, neon-lit stage production',
+  'Hip-Hop / Rap':'Hip-Hop rap culture visual aesthetic, urban street art influence, gold chain jewelry, graffiti backdrop, confident stance, streetwear fashion',
+  'R&B / Soul':'R&B soul music visual aesthetic, smooth moody lighting, sensual silhouette, warm color palette, soulful emotional expression',
+  'Reggae / Dancehall':'Reggae Dancehall music visual style, Jamaican culture, red gold green palette, cannabis leaf motifs, riddim energy',
+  'Afrobeats / Afropop':'Afrobeats Afropop visual aesthetic, vibrant African colors, Ankara pattern influence, high energy dance, Pan-African visual identity',
+  'Jazz / Blues':'Jazz Blues visual aesthetic, smoky club atmosphere, saxophone silhouette, moody blue lighting, vintage feel',
+  'Rock / Alternative':'Rock alternative music visual aesthetic, guitar hero pose, stage lighting, rebellious energy, band merchandise graphic style',
+  'Heavy Metal / Thrash':'Heavy Metal Thrash music visual aesthetic, aggressive angular composition, fire and lightning, skull imagery, dark power',
+  'Death Metal / Black Metal':'Death Metal Black Metal visual aesthetic, extreme dark imagery, forbidding atmosphere, detailed grotesque illustration',
+  'Punk / Hardcore':'Punk Hardcore visual aesthetic, DIY zine aesthetic, mohawk and leather jacket, anarchist energy, rough raw graphic design',
+  'Classic Rock':'Classic Rock visual aesthetic, arena rock stage, pyrotechnics, vintage band poster style, guitar riff energy',
+  'Gospel / Worship':'Gospel Worship music visual aesthetic, heavenly light rays, uplifted hands, spiritual elevation, divine golden glow',
+  'Latin / Reggaeton':'Latin Reggaeton visual aesthetic, hot tropical colors, sensual urban energy, Miami-Latin club culture',
+  'Drum & Bass / Jungle':'Drum and Bass Jungle visual aesthetic, breakbeat energy, warehouse rave culture, dark urban underground',
+  'House / Techno / Trance':'House Techno Trance visual aesthetic, minimal electronic, Berlin club culture, hypnotic repetition, rave culture',
+  'Lo-Fi / Chillwave':'Lo-Fi Chillwave visual aesthetic, soft warm tones, cassette tape nostalgia, cozy introspective atmosphere',
+  'Country / Americana':'Country Americana visual aesthetic, open road, cowboy hat, dusty sunset, heartland americana feeling',
+  'Classical / Orchestral':'Classical Orchestral music visual aesthetic, concert hall grandeur, formal elegance, symphony conductor',
+  '70s Funk & Soul Album Art':'1970s Funk Soul album cover art, bold serif typography, earth tone photography, afro style fashion, vintage vinyl aesthetic',
+  '80s Synth Pop Cover':'1980s Synth Pop album cover art, neon color palette, geometric design, new wave fashion, studio portrait',
+  '80s Metal Album Cover':'1980s Heavy Metal album cover art, fantasy illustration, dragon and warrior imagery, dramatic lighting, airbrush painting',
+  '90s Hip-Hop CD Cover':'1990s Hip-Hop CD cover art, urban photography, tag lettering, Timberland and FUBU fashion, New York street aesthetic',
+  '90s Rave Flyer':'1990s Rave Flyer design, photocopied aesthetic, smiley face logo, neon on black, underground party announcement',
+  '90s Grunge Album Art':'1990s Grunge album art, lo-fi photography, distressed texture, Pacific Northwest aesthetic, raw emotional imagery',
+  '2000s Club Promo':'2000s Club Promo flyer design, lens flare photography, chrome text, VIP lifestyle imagery',
+  '2010s EDM Festival Poster':'2010s EDM Festival Poster, geometric light show, stage production photography, neon headline typography',
+  'Modern Streaming Cover':'Modern Streaming Platform cover art, clean bold typography, striking single image, Spotify-ready composition',
+  'Vinyl Record LP Art':'Vinyl Record LP album art, gatefold sleeve aesthetic, full artwork painting, collector edition quality',
+  'Waveform / Frequency Visual':'audio waveform visualization graphic, frequency spectrum display, equalizer pattern, oscilloscope wave aesthetic',
+  'Equalizer Bars':'equalizer bar visualization graphic, bouncing audio levels, sound meter aesthetic, music technology visual',
+  'Vinyl Record Aesthetic':'vinyl record album aesthetic, spinning platter visual, record groove detail, turntable culture',
+  'DJ Booth / Turntable Scene':'DJ booth turntable scene, CDJ Pioneer equipment, mixer faders, DJ performance environment, club lighting',
+  'Festival Main Stage':'music festival main stage visual, massive crowd, LED video wall, pyrotechnics, headliner performance',
+  'Concert Crowd Energy':'concert crowd energy, raised hands, phone lights, mosh pit energy, live music performance atmosphere',
+  'Cassette Tape Nostalgia':'cassette tape nostalgic visual, magnetic tape aesthetic, 80s-90s music culture, lo-fi warmth',
+  'Holographic CD Shimmer':'holographic CD shimmer visual, rainbow iridescent disc, compact disc prism effect',
+  'Neon Club Lighting':'neon club lighting aesthetic, colored light wash, nightclub atmosphere, UV glow environment',
+  'Studio Mixing Board':'recording studio mixing board visual, faders and knobs, professional audio equipment, producer aesthetic',
+  'Laser Light Show':'laser light show visual, beam patterns, concert production, rave atmosphere, light art',
+  'Smoke Machine Haze':'smoke machine atmospheric haze, concert fog effect, mysterious atmospheric lighting',
+  'Carnival Mas Band':'Trinidad Carnival Mas Band visual, elaborate feathered costume, sequins and rhinestones, road march energy',
+  'Pyrotechnic Fireworks':'stage pyrotechnic fireworks visual, concert special effects, flame jets, explosion of sparks',
+  'Classic Rock Band Poster':'classic rock band concert poster, 1970s typography, psychedelic border, arena tour dates',
+  'Arena Rock Stage Shot':'arena rock stage photography, massive stage production, band silhouette against light rig',
+  'Heavy Metal Illustrated Cover':'heavy metal illustrated album cover, fantasy or horror scene, detailed airbrush or oil painting, dark power',
+  'Punk Band Flyer':'punk band flyer design, xerox texture, aggressive typography, DIY cut-and-paste aesthetic',
+  'Psychedelic Rock Poster':'psychedelic rock concert poster, swirling liquid typography, rainbow colors, 1967 Summer of Love aesthetic',
+  'Metal Skull & Fire Art':'metal music skull and fire illustration, aggressive bone and flame imagery, dark heavy metal graphic',
+  'Black Metal Atmospheric':'black metal atmospheric visual, misty forest, cold moonlight, ancient runes, forbidding darkness',
+  'Death Metal Gore Illustration':'death metal style extreme illustration, grotesque imagery, horror comic influence, intense dark graphic',
+  'Thrash Metal Aggressive':'thrash metal aggressive visual style, lightning bolt energy, screaming crowd, speed and aggression',
+  'Hair Metal 80s Glam':'hair metal 1980s glam rock visual, big hair, leather and spandex, guitar solo pose, Sunset Strip aesthetic',
+  'Prog Rock Epic Fantasy':'progressive rock epic fantasy visual, Roger Dean inspired landscapes, dreamlike alien worlds, orchestral grandeur',
+  'Grunge Distressed':'grunge music distressed visual aesthetic, lo-fi photography, Pacific Northwest gloom, raw emotional truth',
+  'Indie Rock Minimalist':'indie rock minimalist visual aesthetic, simple photography, muted palette, art house sensibility',
+  'Emo / Post-Hardcore':'emo post-hardcore visual aesthetic, black and red, emotional typography, heart and wings imagery',
+  // WRESTLING
+  'WWE Shop Official Merch':'WWE official merchandise t-shirt design, professional wrestling brand aesthetic, bold graphic on dark shirt, championship quality printing',
+  'Attitude Era Tee':'WWF Attitude Era t-shirt design, late 1990s raw energy, distressed print, edgy dark aesthetic, foil print elements, bold impact typography',
+  'Modern WWE Shop Style':'modern WWE Shop t-shirt design, clean full-color graphic, contemporary wrestling merchandise aesthetic, premium quality print',
+  'Championship Belt Graphic':'wrestling championship belt illustration, ornate gold plates, center gem design, side plates, title belt prestige aesthetic',
+  'WrestleMania Event Tee':'WrestleMania event t-shirt design, annual spectacle branding, epic scale typography, collector edition wrestling merchandise',
+  'Hall of Fame Edition':'WWE Hall of Fame commemorative design, legacy and legend aesthetic, gold and black color scheme, career tribute graphic',
+  'NXT Underground':'NXT wrestling underground aesthetic, developmental brand energy, dark arena atmosphere, future stars of wrestling',
+  'AEW Double or Nothing':'AEW All Elite Wrestling design aesthetic, contemporary wrestling brand, modern sports entertainment graphic design',
+  'ROH Pure Wrestling':'Ring of Honor pure wrestling aesthetic, technical grappling culture, classic wrestling heritage, respect the sport graphic',
+  'Lucha Underground':'Lucha Underground wrestling aesthetic, Mexican lucha libre, mysterious dark temple setting, supernatural lucha storytelling',
+  'Hulkamania 80s Style':'Hulkamania t-shirt design, yellow and red color scheme, tear-away training top aesthetic, Hulk Hogan 1980s WWE era, brother!',
+  'Stone Cold 3:16 Skull':'Stone Cold Steve Austin 3:16 design, skull and crossbones, anti-authority attitude, Rattlesnake persona, beer drinking rebel',
+  'DX Green Glow':'D-Generation X t-shirt design, green glow neon aesthetic, crotch chop graphic, are you ready?, rebel faction attitude',
+  'nWo Hollywood Black & White':'New World Order Hollywood nWo t-shirt design, black and white spray paint aesthetic, red accent, too sweet, Hollywood Hogan',
+  'Undertaker Ministry Gothic':'Undertaker gothic t-shirt design, Ministry of Darkness era, tombstone imagery, purple and black, deadman walking aesthetic',
+  'CM Punk Straight Edge Punk':'CM Punk straight edge design, X marks, pipe bomb energy, anti-establishment wrestling punk aesthetic',
+  'The Rock Brahma Bull':'The Rock Brahma Bull t-shirt design, bull skull graphic, jabroni beating layeth down the smack, Peoples Champion',
+  'Ric Flair WOOOOO Glam':'Ric Flair Nature Boy design, robe and glitter, WOOOOO lettering, limousine riding jet flying kiss stealing son of a gun',
+  'Macho Man Savage Madness':'Macho Man Randy Savage design, colorful flamboyant aesthetic, OH YEAH, cream of the crop, sunglasses and hat',
+  'Ultimate Warrior Intensity':'Ultimate Warrior t-shirt design, face paint design, rope shaking intensity, powers of the warrior, cosmic energy',
+  'Mick Foley Have a Nice Day':'Mick Foley Mankind Have a Nice Day, sock puppet graphic, cheap pop, smiling sock face, hardcore legend',
+  'Bret Hart Pink & Black':'Bret Hitman Hart pink and black attack design, excellence of execution, sunglasses and leather jacket, best there is',
+  'Goldberg Who\'s Next':'Goldberg WHO\'S NEXT design, lightning bolt, beast from the east, undefeated streak energy, spear and jackhammer',
+  'Kevin Owens Prize Fighter':'Kevin Owens Prize Fighter design, championship obsessed, fight owens fight, blue collar brawler aesthetic',
+  'Roman Reigns Tribal Chief':'Roman Reigns Tribal Chief design, Samoan tribal pattern, wiseman Paul Heyman, acknowledge me, Head of the Table',
+  'Cody Rhodes American Nightmare':'Cody Rhodes American Nightmare design, finishing your story, cross tattoo, American Dream legacy',
+  'Custom Name in nWo Style':'custom name treatment in nWo Hollywood black and white spray paint style, new world order aesthetic',
+  'Custom Name in Stone Cold Style':'custom name treatment in Stone Cold Steve Austin skull and 3:16 style, attitude era wrestling font',
+  'Custom Name in Undertaker Gothic':'custom name treatment in Undertaker gothic dark funeral aesthetic, deadman style dark typography',
+  'Custom Name in Hulkamania':'custom name treatment in Hulkamania style, yellow and red, tear shirt aesthetic, 1980s WWE font',
+  'Custom Belt with Name Plate':'custom WWE-style championship belt with personalized name plate, gold strap with ornate center plate',
+  'DJ as Entrance Pyro Graphic':'DJ entrance pyrotechnic graphic, wrestling entrance energy, fire jets and smoke, arena showmanship',
+  'Finishing Move Named Graphic':'wrestling finishing move named graphic, signature move illustration, impact moment capture',
+  'Manager Valet Promo Shot':'wrestling manager valet promotional shot, side by side character graphic, faction identity design',
+  'Tag Team Partner Split Graphic':'tag team partner split screen graphic, dual character design, championship team identity',
+  'Heel Turn Dark Side Version':'wrestling heel turn dark side design, sinister version of character, villainous turn aesthetic, red and black',
+  'Foil / Metallic Print Simulation':'wrestling t-shirt foil metallic print simulation, shiny reflective ink aesthetic, premium merch quality',
+  'Distressed Vintage Wash':'vintage wash distressed t-shirt print, worn and faded look, aged wrestling merchandise aesthetic',
+  'Glow in the Dark Aesthetic':'glow in the dark t-shirt graphic, phosphorescent ink aesthetic, dark activation design',
+  'Event Date & Location Text':'wrestling event date and location text, arena name, city and date, official event design element',
+  'Entrance Pyro Explosion':'wrestling entrance pyrotechnic explosion graphic, fire jets, smoke clouds, arena spectacle',
+  'Smoke & Spotlight Effect':'wrestling smoke and spotlight entrance effect, dramatic lighting through haze, arena atmosphere',
+  'Championship Gold Foil':'championship gold foil effect, metallic gold ink simulation, title belt prestige aesthetic',
+  'Crowd Silhouette Background':'arena crowd silhouette background, raised hands, sold-out crowd atmosphere, wrestling event energy',
+  'Lightning Strike Effect':'lightning bolt strike graphic effect, electric power visual, thunderbolt energy, supernatural force',
+  'Arena Titantron Screen':'WWE arena Titantron screen design, entrance video graphic, jumbotron display aesthetic',
+  // LOGO
+  'Wordmark Only':'clean wordmark logo design, custom lettering, typography-only logo, professional brand identity',
+  'Lettermark / Monogram':'lettermark monogram logo design, interlocking initials, typographic emblem',
+  'Pictorial Mark':'pictorial logo mark, recognizable symbol icon, simple standalone image logo',
+  'Abstract Mark':'abstract geometric logo mark, non-literal brand symbol, unique shape composition',
+  'Badge / Crest Logo':'badge crest logo design, circular or shield shaped, intricate detail, craft or sports team aesthetic',
+  'Emblem / Seal':'emblem seal logo design, contained within shape, official aesthetic, detailed border treatment',
+  'Mascot Logo':'mascot character logo design, brand personality, cartoon character integrated into logo',
+  'Shield Logo':'shield shaped logo design, protective emblem, sports or security brand, bold heraldic aesthetic',
+  'Minimalist Modern':'minimalist modern logo design, clean lines, maximum negative space, contemporary design',
+  'Flat Design 2-Color':'flat design 2-color logo, solid fills no gradients, geometric simplicity, scalable vector',
+  'Negative Space':'negative space logo design, clever hidden image within shape, sophisticated visual puzzle',
+  'Vintage / Retro Badge':'vintage retro badge logo design, distressed texture, aged look, craft brand or heritage aesthetic',
+  'Distressed / Grunge':'distressed grunge logo style, worn texture, rough edges, underground brand aesthetic',
+  'Woodcut / Linocut':'woodcut linocut print logo style, hand-carved aesthetic, rough textured lines, artisan block print',
+  'Luxury / Gold Foil':'luxury gold foil logo design, premium brand identity, metallic shimmer, elegant typography',
+  'Art Deco Symmetry':'Art Deco symmetrical logo design, geometric ornament, radial symmetry, 1920s luxury aesthetic',
+  'Heraldic / Coat of Arms':'heraldic coat of arms logo design, traditional blazon, rampant animal supporters, medieval shield aesthetic',
+  'Streetwear / Hype':'streetwear hype logo design, bold graphic identity, urban brand aesthetic',
+  'Sports Team / Athletic':'sports team athletic logo design, bold mascot, team color blocking, dynamic energy',
+  'Esports / Gaming Clan':'esports gaming clan logo design, angular aggressive shapes, neon accent colors, digital tribal aesthetic',
+  'Metal Band Logo':'metal band logo design, extreme typography, aggressive lettering, dark imagery',
+  'Biker / MC Patch':'motorcycle club patch logo design, rocker panels, eagle or skull imagery, biker culture badge',
+  'Celtic Knotwork':'Celtic knotwork logo design, interlaced continuous pattern, Irish or Scottish heritage',
+  'Wax Seal / Sigil':'wax seal sigil logo design, embossed stamp aesthetic, occult or magical symbol, heraldry',
+  'Tattoo Style':'tattoo style logo design, traditional or neo-traditional, bold outline, limited palette',
+  'Neon Sign Style':'neon sign style logo design, glowing tube light aesthetic, retro diner neon, electric light art',
+};
+
+const PN={
+  'Midjourney':      {pre:'',suf:' --v 6.1 --style raw --q 2',note:'Use /imagine in Discord. --ar flag added automatically.'},
+  'DALL·E 3':        {pre:'Create an image of: ',suf:'',note:'Natural language. Works well for descriptive prompts.'},
+  'Stable Diffusion':{pre:'',suf:', masterpiece, best quality, detailed',note:'Supports negative prompts natively. See negative prompt below.'},
+  'Adobe Firefly':   {pre:'',suf:'',note:'Descriptive natural language. Use Generative Fill for backgrounds.'},
+  'Ideogram':        {pre:'',suf:'',note:'Best for text in images and logos. Excellent for poster and merch work.'},
+  'Leonardo AI':     {pre:'',suf:', 8k, ultra detailed',note:'Try PhotoReal or Anime XL depending on style.'},
+  'Bing Image':      {pre:'',suf:'',note:'Uses DALL·E. Natural language works best.'},
+  'Flux':            {pre:'',suf:', high quality, detailed',note:'Excels at photorealism and detailed illustration.'},
+};
+const RMJ={'1:1 Square':'--ar 1:1','4:5 Portrait':'--ar 4:5','9:16 Tall':'--ar 9:16','3:4':'--ar 3:4','16:9 Wide':'--ar 16:9','2:1 Banner':'--ar 2:1'};
+const PC={'Midjourney':'#5865f2','DALL·E 3':'#10a37f','Stable Diffusion':'#ff6b35','Adobe Firefly':'#ff2bc2','Ideogram':'#facc15','Leonardo AI':'#a855f7','Bing Image':'#0078d4','Flux':'#ff4488'};
+
+// ══ GENERATE ══
+function generate(){
+  const stype=state.subjectType;
+  const ctx=state.contextMode;
+  const brand=state.brandMode;
+  const artStyle=getStyle();
+  const moods=getMany('moodPills');
+  const pose=getOne('posePills');
+  const subjCtx=getOne('subjCtxPills');
+  const color=getOne('colorPills');
+  const customColor=document.getElementById('customColor').value.trim();
+  const bg=getOne('bgPills');
+  const purpose=getOne('purposePills');
+  const merch=getMany('merchPills');
+  const ratio=getOne('ratioPills');
+  const quality=getOne('qualPills');
+  const ais=getAIs();
+  const txOn=document.getElementById('textEnabled').checked;
+  const textLines=getTextLines();
+  const txStyle=getFontStyle();
+  const txFx=getMany('textFxPills');
+  const txPos=getOne('textPosPills');
+  const lineNotes=document.getElementById('lineStyleNotes').value.trim();
+  const noBg=document.getElementById('noBackground').checked;
+  const isol=document.getElementById('isolatedChar').checked;
+  const vecF=document.getElementById('vectorFriendly').checked;
+  const pSafe=document.getElementById('printSafe').checked;
+  const vinyl=document.getElementById('vinylReady').checked;
+  const emb=document.getElementById('embroidery').checked;
+  const noGrad=document.getElementById('noGradients').checked;
+  const logoSafe=document.getElementById('logoSafe').checked;
+  const spotifyReady=document.getElementById('spotifyReady').checked;
+
+  if(!ais.length){alert('Select at least one AI platform.');return;}
+
+  let parts=[];
+
+  // SUBJECT
+  if(stype==='character'){
+    const desc=document.getElementById('charDesc').value.trim();
+    if(state.img&&desc)parts.push('Based on uploaded reference image: '+desc);
+    else if(state.img)parts.push('Solo character from uploaded reference image');
+    else if(desc)parts.push(desc);
+    else parts.push('solo character, full body');
+    if(subjCtx&&!subjCtx.includes('N/A'))parts.push('subject type: '+subjCtx.toLowerCase());
+  } else if(stype==='logo'){
+    const desc=document.getElementById('logoDesc').value.trim();
+    const industry=getMany('logoIndustryPills');
+    let lb='Logo design';
+    if(desc)lb+=' for: '+desc;
+    if(industry.length)lb+=', industry: '+industry.join(', ').toLowerCase();
+    parts.push(lb);
+    parts.push('professional logo design, clean scalable graphic, brand identity mark');
+    if(logoSafe)parts.push('vector scalable, works at small sizes, no photorealism');
+  } else {
+    const desc=document.getElementById('objDesc').value.trim();
+    if(desc)parts.push(desc);
+    else parts.push('graphic design element, mascot or icon');
+  }
+
+  // CHARACTER LIBRARY
+  const charParts=[];
+  if(state.chars.gk&&CHAR_DESCS.gk)charParts.push(CHAR_DESCS.gk);
+  if(state.chars.djsl&&CHAR_DESCS.djsl)charParts.push(CHAR_DESCS.djsl);
+  ['sean','laurinda','mike'].forEach(n=>{if(state.chars[n]&&CHAR_DESCS[n])charParts.push(CHAR_DESCS[n]);});
+  state.customChars.forEach(c=>{if(c.active&&c.desc)charParts.push(c.desc);});
+  if(charParts.length)parts.push('featuring: '+charParts.join('; '));
+
+  // BRAND MODE
+  if(brand==='gk')parts.push('gold and black luxury royal aesthetic, regal majestic power, crown and royal imagery, premium opulent visual');
+  else if(brand==='dx')parts.push('high-energy electronic music visuals, frequency waveform patterns, technical audio equipment aesthetic, sonic vibration and bass energy');
+  else if(brand==='dj')parts.push('DJ Shawn Lopes artist branding, Caribbean electronic fusion music culture, professional DJ performer aesthetic, Soca and EDM crossover energy');
+
+  // ART STYLE
+  if(artStyle){const d=SN[artStyle]||artStyle+' art style';parts.push('rendered in '+d);}
+
+  // POSE / MOOD
+  if(stype!=='logo'){
+    if(pose&&!pose.includes('N/A'))parts.push(pose.toLowerCase()+' pose');
+    if(moods.length)parts.push(moods.join(', ').toLowerCase()+' mood and energy');
+  } else {
+    if(moods.length)parts.push(moods.join(', ').toLowerCase()+' brand feeling');
+  }
+
+  // COLOR
+  if(color&&color!=='Custom (describe below)')parts.push(color.toLowerCase()+' color scheme');
+  else if(customColor)parts.push('color palette: '+customColor);
+
+  // BACKGROUND
+  if(bg){
+    if(bg==='No Background'||noBg)parts.push('no background, isolated on white');
+    else if(bg==='Transparent')parts.push('transparent background');
+    else parts.push(bg.toLowerCase()+' background');
+  }
+  if(isol)parts.push('fully isolated subject, no environment');
+
+  // LIFESTYLE ENVIRONMENT
+  if(ctx==='lifestyle'){
+    const env=document.getElementById('lifestyleEnv').value;
+    if(env)parts.push('environment: '+env);
+  }
+
+  // ALBUM / TRACK
+  if(ctx==='album'){
+    const track=document.getElementById('trackName').value.trim();
+    if(track)parts.push('for the track: '+track);
+    const rtype=getOne('releaseTypePills');
+    if(rtype)parts.push(rtype.toLowerCase()+' artwork');
+    if(spotifyReady)parts.push('Spotify-optimized square format, 3000x3000 equivalent quality, streaming platform ready');
+  }
+
+  // TEXT OVERLAY
+  if(txOn&&textLines.length){
+    // Detect bracket labels
+    const processed=textLines.map(line=>{
+      const bracketMatch=line.match(/^\[(.+)\]$/);
+      if(bracketMatch){
+        return`label overlay "${bracketMatch[1]}" in white industrial stencil font, positioned in the bottom right corner`;
+      }
+      return`text line: "${line}"`;
+    });
+    let tp=processed.join('; ');
+    if(txStyle)tp+=' in '+txStyle.toLowerCase()+' typeface style';
+    if(txFx.length)tp+=' with '+txFx.join(', ').toLowerCase()+' text effects';
+    if(txPos)tp+=', positioned '+txPos.toLowerCase();
+    if(lineNotes)tp+='. Typography notes: '+lineNotes;
+    parts.push(tp);
+  }
+
+  // TECHNICAL FLAGS
+  let flags=[];
+  if(vecF)flags.push('flat vector-friendly fills, bold outlines, no gradients');
+  if(pSafe)flags.push('CMYK print-safe colors');
+  if(vinyl)flags.push('bold thick outlines for vinyl cutting, no fine details');
+  if(emb)flags.push('simplified shapes for embroidery, reduced color count');
+  if(noGrad)flags.push('flat colors only, no gradients');
+  if(flags.length)parts.push(flags.join(', '));
+
+  if(quality)parts.push(quality.toLowerCase());
+
+  // CONTEXT SUFFIX
+  parts.push(CTX_SUFFIX[ctx]||'');
+
+  if(purpose&&purpose!=='Digital Only'){
+    let pn='optimized for '+purpose.toLowerCase();
+    if(merch.length)pn+=' on '+merch.slice(0,3).join(', ').toLowerCase();
+    parts.push(pn);
+  }
+
+  const core=parts.filter(Boolean).join(', ');
+  const rMJ=ratio?(RMJ[ratio]||'--ar 1:1'):'--ar 1:1';
+
+  // NEGATIVE PROMPT
+  let negativePrompt=state.vaultOn?VAULT_KEYWORDS:'';
+  if(state.vaultOn&&brand==='gk')negativePrompt+=', '+GK_EXTRA;
+
+  const oa=document.getElementById('outputArea');
+  oa.innerHTML='';
+  ais.forEach((ai,i)=>{
+    const pd=PN[ai]||{pre:'',suf:'',note:''};
+    let prompt=pd.pre+core;
+    // Platform-specific negative
+    if(ai==='Midjourney'){
+      if(!prompt.includes('--ar'))prompt+=' '+rMJ;
+      if(negativePrompt)prompt+=' --no '+negativePrompt;
+      prompt+=pd.suf;
+    } else if(ai==='Stable Diffusion'){
+      prompt+=pd.suf;
+    } else {
+      if(negativePrompt)prompt+='. Avoid: '+negativePrompt;
+      prompt+=pd.suf;
+    }
+
+    const div=document.createElement('div');
+    div.className='pblock';
+    div.style.animationDelay=(i*.05)+'s';
+    const light=ai==='Ideogram';
+    let html='<div class="plbl" style="background:'+(PC[ai]||'#333')+';color:'+(light?'#000':'#fff')+'">'+ai+'</div>';
+    if(pd.note)html+='<div style="font-family:\'Barlow Condensed\',sans-serif;font-size:.72rem;color:var(--dim);padding:3px 10px;background:var(--s2);border-left:2px solid '+(PC[ai]||'#333')+'">'+pd.note+'</div>';
+    html+='<div class="pbox"><button class="copy-btn" onclick="doCopy(this,\''+encodeURIComponent(prompt)+'\')">COPY</button>'+escH(prompt)+'</div>';
+    if(ai==='Stable Diffusion'&&negativePrompt){
+      html+='<div class="neg-box">⛔ NEGATIVE PROMPT:<br>'+escH(negativePrompt)+'</div>';
+    }
+    div.innerHTML=html;
+    oa.appendChild(div);
+  });
+
+  // MERCH NOTES
+  const mn=document.getElementById('merchNote');
+  if(merch.length&&purpose&&purpose!=='Digital Only'){
+    mn.style.display='block';
+    mn.innerHTML='<strong>Merch Notes:</strong> '+purpose+' on: <strong>'+merch.join(', ')+'</strong><br>'+
+      (vinyl?'✂️ Vinyl: Bold outlines only. Max 2-3 colors. Remove halftones.<br>':'')+
+      (pSafe?'🖨️ Print: Convert to CMYK. Check total ink coverage.<br>':'')+
+      (emb?'🧵 Embroidery: 3mm min detail. Max 6-8 thread colors.<br>':'')+
+      (purpose==='Screen Print'?'🎨 Screen Print: Separate each color to its own layer.<br>':'');
+  } else mn.style.display='none';
+
+  document.getElementById('outputSection').style.display='block';
+  document.getElementById('outputSection').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+// ══ HISTORY ══
+function loadHistory(){
+  try{const h=localStorage.getItem('pf_history');if(h){state.history=JSON.parse(h);renderHistory();}}catch(e){}
+}
+function saveToHistory(){
+  const blocks=[...document.querySelectorAll('.pblock')];
+  if(!blocks.length){alert('Generate prompts first!');return;}
+  const ai=document.querySelector('.pblock .plbl')?.textContent||'Unknown';
+  const prompt=document.querySelector('.pblock .pbox')?.textContent?.replace(/COPY|COPIED!/g,'').trim()||'';
+  if(!prompt)return;
+  const entry={id:Date.now(),ai,prompt,style:document.getElementById('styleSummary').textContent,ts:new Date().toLocaleString()};
+  state.history.unshift(entry);
+  if(state.history.length>20)state.history=state.history.slice(0,20);
+  try{localStorage.setItem('pf_history',JSON.stringify(state.history));}catch(e){}
+  renderHistory();
+  const btn=document.getElementById('copyAllBtn');
+  const old=document.getElementById('copyAllBtn').textContent;
+  alert('✅ Saved to history!');
+}
+function renderHistory(){
+  const el=document.getElementById('historyList');
+  document.getElementById('historyCount').textContent=state.history.length+' saved';
+  if(!state.history.length){el.innerHTML='<div style="color:var(--dim);font-family:\'Barlow Condensed\',sans-serif;font-size:.82rem;letter-spacing:1px">No saved prompts yet.</div>';return;}
+  el.innerHTML='';
+  state.history.forEach((h,i)=>{
+    const div=document.createElement('div');
+    div.className='hist-item';
+    div.innerHTML=`<div class="hist-meta"><span>${h.ai} · ${h.style}</span><span>${h.ts} <span class="hist-del" onclick="deleteHist(${i},event)">✕</span></span></div><div class="hist-preview">${escH(h.prompt.substring(0,120))}...</div>`;
+    div.onclick=()=>{navigator.clipboard.writeText(h.prompt).then(()=>alert('Copied to clipboard!'));};
+    el.appendChild(div);
+  });
+}
+function deleteHist(i,e){
+  e.stopPropagation();
+  state.history.splice(i,1);
+  try{localStorage.setItem('pf_history',JSON.stringify(state.history));}catch(e){}
+  renderHistory();
+}
+function clearHistory(){
+  if(confirm('Clear all saved prompts?')){
+    state.history=[];
+    try{localStorage.removeItem('pf_history');}catch(e){}
+    renderHistory();
+  }
+}
+
+// ══ UTILITIES ══
+function escH(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function doCopy(btn,enc){
+  navigator.clipboard.writeText(decodeURIComponent(enc)).then(()=>{
+    btn.textContent='COPIED!';btn.classList.add('ok');
+    setTimeout(()=>{btn.textContent='COPY';btn.classList.remove('ok')},2000);
+  });
+}
+function copyAll(){
+  let all='';
+  document.querySelectorAll('.pblock').forEach(b=>{
+    const lbl=b.querySelector('.plbl')?.textContent?.trim()||'';
+    const txt=b.querySelector('.pbox')?.textContent?.replace(/COPY|COPIED!/g,'').trim()||'';
+    all+='['+lbl+']\n'+txt+'\n\n';
+  });
+  navigator.clipboard.writeText(all.trim()).then(()=>{
+    const btn=document.getElementById('copyAllBtn');
+    btn.textContent='Copied!';setTimeout(()=>btn.textContent='Copy All',2000);
+  });
+}
+function clearOut(){
+  document.getElementById('outputArea').innerHTML='';
+  document.getElementById('outputSection').style.display='none';
+}
+</script>
+</body>
+</html>
